@@ -1,0 +1,31 @@
+.visor { 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color:white;
+  height:100%;
+  font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.visor-big {
+  padding:5px;
+  font-size: 4rem;
+}
+
+.visor-small {
+  padding:5px;
+}
+
+
+.visor-small > div > span {
+  font-weight: bold;
+  color: yellow;
+}
+
+.score {
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1.5rem; 
+  padding:10px;
+  text-align: right;
+}

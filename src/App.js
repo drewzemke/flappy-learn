@@ -1,23 +1,35 @@
-import logo from './logo.svg';
 import './App.css';
+import GameEngine from './components/GameEngine';
+import { Canvas } from '@react-three/fiber';
+import { GameConstants } from './game-model/GameConstants';
+
+const SCALE = 100;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div
+      style={{
+        width: `${GameConstants.SCREEN_WIDTH * SCALE}px`,
+        height: `${GameConstants.SCREEN_HEIGHT * SCALE}px`
+      }}
+    >
+      <Canvas
+        orthographic
+        camera={{
+          zoom: SCALE,
+          position: [0, 0, 1],
+          top: GameConstants.SCREEN_HEIGHT / 2,
+          bottom: -GameConstants.SCREEN_HEIGHT / 2,
+          left: -GameConstants.SCREEN_WIDTH / 2,
+          right: GameConstants.SCREEN_WIDTH / 2
+        }}
+      >
+        <color
+          attach='background'
+          args={['black']}
+        />
+        <GameEngine />;
+      </Canvas>
     </div>
   );
 }
