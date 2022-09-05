@@ -1,13 +1,13 @@
 import { GameConstants } from './GameConstants';
 import create from 'zustand';
-import { BirdModel, PipeModel } from './FlappyGameModel';
+import {
+  RunState,
+  BirdModel,
+  PipeModel,
+  testRoomCollisions,
+  testPipeCollisions,
+} from './FlappyGameModel';
 import { addEffect } from '@react-three/fiber';
-
-export const RunState = {
-  WAITING_TO_START: 0,
-  RUNNING: 1,
-  DEAD: 3,
-};
 
 export const useStore = create((set, get) => {
   return {
@@ -18,14 +18,6 @@ export const useStore = create((set, get) => {
     bird: null,
     pipes: [],
     activePipeIndex: 0,
-
-    //
-    // Hi Drew
-    //
-    // Something is still wrong with the initial positions of the pipes
-    // and bird. Fix plz!
-    //
-    //
 
     actions: {
       // sets or resets the game
@@ -134,62 +126,3 @@ export const useStore = create((set, get) => {
     },
   };
 });
-
-function testRoomCollisions(birdPos) {
-  // First, check if we've hit the top or bottom
-  if (
-    Math.abs(birdPos.y) + GameConstants.BIRD_RADIUS >
-    GameConstants.SCREEN_HEIGHT / 2 + GameConstants.COLLISION_TOLERANCE
-  ) {
-    console.log('Died by hitting the top or bottom of the screen');
-    return true;
-  }
-}
-
-function testPipeCollisions(birdPos, pipePos) {
-  // If we're above or below the gap, we just need to be at least a bird's radius
-  // away from the side of the pipe
-  if (Math.abs(birdPos.y - pipePos.y) > GameConstants.PIPE_GAP_SIZE / 2) {
-    if (
-      Math.abs(birdPos.x - pipePos.x) - GameConstants.BIRD_RADIUS <
-      GameConstants.PIPE_WIDTH / 2 - GameConstants.COLLISION_TOLERANCE
-    ) {
-      console.log('Died by hitting the side of a pipe');
-      return true;
-    }
-  }
-
-  // So we're between the gaps vertically. If the bird center is directly above or below
-  // the pipes, we just need to be a radius way pipes top/bottom
-  if (Math.abs(birdPos.x - pipePos.x) < GameConstants.PIPE_WIDTH / 2) {
-    if (
-      Math.abs(birdPos.y - pipePos.y) + GameConstants.BIRD_RADIUS >
-      GameConstants.PIPE_GAP_SIZE / 2 + GameConstants.COLLISION_TOLERANCE
-    ) {
-      console.log('Died by hittng the top or bottom of a pipe');
-      return true;
-    }
-  }
-
-  // Last thing: check for collision with the pipe corner
-  // Start by finding the coordinates of the closest pipe corner
-  const cornerX =
-    birdPos.x < pipePos.x
-      ? pipePos.x - GameConstants.PIPE_WIDTH / 2
-      : pipePos.x + GameConstants.PIPE_WIDTH / 2;
-  const cornerY =
-    birdPos.y < pipePos.y
-      ? pipePos.y - GameConstants.PIPE_GAP_SIZE / 2
-      : pipePos.y + GameConstants.PIPE_GAP_SIZE / 2;
-  // Compute the distance to the corner and return true if that's closer than the bird radius
-  const dist = Math.sqrt(
-    (cornerX - birdPos.x) ** 2 + (cornerY - birdPos.y) ** 2
-  );
-
-  if (dist < GameConstants.BIRD_RADIUS - GameConstants.COLLISION_TOLERANCE) {
-    console.log('Died by hitting a corner');
-    return true;
-  }
-
-  return false;
-}

@@ -1,9 +1,8 @@
 import React from 'react';
 import { GameConstants } from '../game-model/GameConstants';
 
-function BirdInternal({ meshRef, position }) {
+export function Bird({ position }) {
   return (
-    // <mesh ref={meshRef}>
     <mesh position={[position.x, position.y, 0]}>
       <sphereGeometry args={[GameConstants.BIRD_RADIUS, 10, 10]} />
       {/* <planeGeometry
@@ -18,12 +17,3 @@ function BirdInternal({ meshRef, position }) {
     </mesh>
   );
 }
-
-export const Bird = React.forwardRef((props, ref) => {
-  return (
-    <BirdInternal
-      meshRef={ref}
-      {...props}
-    />
-  );
-});

@@ -2,6 +2,7 @@ import './App.css';
 import GameEngine from './components/GameEngine';
 import { Canvas } from '@react-three/fiber';
 import { GameConstants } from './game-model/GameConstants';
+import { Stats } from '@react-three/drei';
 
 const SCALE = 100;
 
@@ -29,6 +30,7 @@ function App() {
           args={['black']}
         />
         <GameEngine />;
+        <Stats />
       </Canvas>
     </div>
   );

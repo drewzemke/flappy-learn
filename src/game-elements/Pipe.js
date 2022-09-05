@@ -1,9 +1,8 @@
 import React from 'react';
 import { GameConstants } from '../game-model/GameConstants';
 
-function PipeInternal({ groupRef, position }) {
+export function Pipe({ position }) {
   return (
-    // <group ref={groupRef}>
     <group position={[position.x, position.y, 0]}>
       <mesh
         position={[
@@ -32,12 +31,3 @@ function PipeInternal({ groupRef, position }) {
     </group>
   );
 }
-
-export const Pipe = React.forwardRef((props, ref) => {
-  return (
-    <PipeInternal
-      groupRef={ref}
-      {...props}
-    />
-  );
-});
