@@ -1,4 +1,3 @@
-import { CompressedPixelFormat } from 'three';
 import { GameConstants } from './GameConstants';
 
 // Running States
@@ -8,7 +7,7 @@ export const RunState = {
   DEAD: 3,
 };
 
-export class FlappyBirdGameModel {
+export class obsolete_FlappyBirdGameModel {
   // NEXT UP: game state! wait for a pause before starting, the reset on death,
   // keep score, etc
 
@@ -193,8 +192,11 @@ export class FlappyBirdGameModel {
   }
 }
 
-class BirdModel {
-  constructor(posY, velY) {
+export class BirdModel {
+  constructor(
+    posY = GameConstants.BIRD_INITIAL_Y,
+    velY = GameConstants.BIRD_INITIAL_VEL
+  ) {
     this._posY = posY;
     this._velY = velY;
   }
@@ -210,7 +212,7 @@ class BirdModel {
   }
 }
 
-class PipeModel {
+export class PipeModel {
   constructor(x) {
     this._x = x;
     this.chooseRandomY();

@@ -1,9 +1,10 @@
 import React from 'react';
 import { GameConstants } from '../game-model/GameConstants';
 
-function BirdInternal({ meshRef }) {
+function BirdInternal({ meshRef, position }) {
   return (
-    <mesh ref={meshRef}>
+    // <mesh ref={meshRef}>
+    <mesh position={[position.x, position.y, 0]}>
       <sphereGeometry args={[GameConstants.BIRD_RADIUS, 10, 10]} />
       {/* <planeGeometry
         args={[

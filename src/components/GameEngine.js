@@ -1,80 +1,56 @@
-import { useFrame } from '@react-three/fiber';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Bird } from '../game-elements/Bird';
 import { Pipe } from '../game-elements/Pipe';
-import { FlappyBirdGameModel, RunState } from '../game-model/FlappyGameModel';
+import { useStore } from '../game-model/store';
 import { usePlayerControl } from '../hooks/controlHooks';
 import { GameVisor } from './GameVisor';
 
 export default function GameEngine() {
-  const gameModel = useRef(new FlappyBirdGameModel());
-  const birdMeshRefs = useRef([]);
-  const pipeGroupRefs = useRef([]);
-
-  const [runState, setRunState] = useState(RunState.WAITING_TO_START);
-  const [score, setScore] = useState(0);
+  const { actions, score, runState, bird, pipes, initialized } = useStore();
 
   function handleJump(event) {
     if (!event || event.code === 'Space') {
-      gameModel.current.triggerJump();
+      actions.jump();
     }
   }
   usePlayerControl(handleJump);
 
   // Use the enter key to start/restart the game
+  function handleEnter(event) {
+    if (event.code === 'Enter') {
+      actions.start();
+    }
+  }
   useEffect(() => {
     window.addEventListener('keydown', handleEnter);
     return () => {
       window.removeEventListener('keydown', handleEnter);
     };
   }, []);
-  function handleEnter(event) {
-    if (event.code === 'Enter') {
-      gameModel.current.start();
-    }
-  }
 
-  // useFrame should do two main things
-  useFrame((state, delta) => {
-    // 1) call model.tick(delta) or whatever to advance the game state
-    gameModel.current.tick(delta);
+  // Initialize the model
+  useEffect(() => {
+    actions.init();
+  }, []);
 
-    // Do some shady BS and set some state in useFrame
-    // We don't even need to use these???
-    // ... This is not good practice and I should find a way to do it right
-    setRunState(gameModel.current.state.runState);
-    setScore(gameModel.current.state.score);
-
-    // 2) update the displayed meshes via their refs
-    // bird(s)
-    const birdPos = gameModel.current.state.birdPosition;
-    birdMeshRefs.current[0].position.set(birdPos.x, birdPos.y, 0);
-
-    // pipes
-    gameModel.current.state.pipesPositions.forEach((pipePos, index) => {
-      pipeGroupRefs.current[index].position.set(pipePos.x, pipePos.y, 0);
-    });
-  });
-
-  // For future reference: We can manage an array of player components with an array in a ref:
-  // const arrayRef = useRef([]);
-  // And then we can refer to it in the mesh like this:
-  // ... meshRef={ el => arrayRef.current[index] = el } ...
-  // This actually works?!?!
+  // NO REFS?!?! Thanks Zustand!
   return (
     <>
       <GameVisor
         score={score}
         runState={runState}
       />
-
-      <Bird meshRef={el => (birdMeshRefs.current[0] = el)} />
-      {gameModel.current.state.pipesPositions.map((el, index) => (
-        <Pipe
-          key={index}
-          groupRef={el => (pipeGroupRefs.current[index] = el)}
-        />
-      ))}
+      {initialized ? (
+        <>
+          <Bird position={bird.position} />
+          {pipes.map((el, index) => (
+            <Pipe
+              key={index}
+              position={pipes[index].position}
+            />
+          ))}
+        </>
+      ) : null}
       <BackgroundPanel />
     </>
   );

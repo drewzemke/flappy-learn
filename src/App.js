@@ -10,7 +10,7 @@ function App() {
     <div
       style={{
         width: `${GameConstants.SCREEN_WIDTH * SCALE}px`,
-        height: `${GameConstants.SCREEN_HEIGHT * SCALE}px`
+        height: `${GameConstants.SCREEN_HEIGHT * SCALE}px`,
       }}
     >
       <Canvas
@@ -21,7 +21,7 @@ function App() {
           top: GameConstants.SCREEN_HEIGHT / 2,
           bottom: -GameConstants.SCREEN_HEIGHT / 2,
           left: -GameConstants.SCREEN_WIDTH / 2,
-          right: GameConstants.SCREEN_WIDTH / 2
+          right: GameConstants.SCREEN_WIDTH / 2,
         }}
       >
         <color

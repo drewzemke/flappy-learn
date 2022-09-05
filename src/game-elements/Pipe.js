@@ -1,14 +1,15 @@
 import React from 'react';
 import { GameConstants } from '../game-model/GameConstants';
 
-function PipeInternal({ groupRef }) {
+function PipeInternal({ groupRef, position }) {
   return (
-    <group ref={groupRef}>
+    // <group ref={groupRef}>
+    <group position={[position.x, position.y, 0]}>
       <mesh
         position={[
           0,
           -GameConstants.SCREEN_HEIGHT / 2 - GameConstants.PIPE_GAP_SIZE / 2,
-          0
+          0,
         ]}
       >
         <planeGeometry
@@ -20,7 +21,7 @@ function PipeInternal({ groupRef }) {
         position={[
           0,
           GameConstants.SCREEN_HEIGHT / 2 + GameConstants.PIPE_GAP_SIZE / 2,
-          0
+          0,
         ]}
       >
         <planeGeometry
