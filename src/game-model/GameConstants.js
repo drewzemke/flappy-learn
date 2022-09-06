@@ -1,8 +1,10 @@
 export const GameConstants = {
+  // Sim constannts
+  NUM_BIRDS: 5,
   // Screen constants
   SCREEN_HEIGHT: 4.5,
   SCREEN_WIDTH: 8,
-  // Player physics
+  // Bird physics
   GRAVITY: 10,
   BIRD_RADIUS: 0.25,
   BIRD_X: -3,

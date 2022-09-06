@@ -2,7 +2,7 @@ import { Html } from '@react-three/drei';
 import { RunState } from '../game-model/FlappyGameModel';
 import '../styles/visorStyles.css';
 
-export function GameVisor({ score, runState }) {
+export function GameVisor({ round, score, runState }) {
   return (
     <>
       {runState !== RunState.RUNNING ? (
@@ -22,7 +22,10 @@ export function GameVisor({ score, runState }) {
           </mesh>
         </>
       ) : (
-        <ScoreContent score={score} />
+        <ScoreContent
+          round={round}
+          score={score}
+        />
       )}
     </>
   );
@@ -32,10 +35,11 @@ function IntroVisorContent() {
   return (
     <Html fullscreen={true}>
       <div className='visor'>
-        <div className='visor-big'>FLAPPIN' BIRB</div>
+        <div className='visor-big'>FLAPPIN' BIRDS</div>
         <div className='visor-small'>
           <div>
-            Press <span>Enter</span> to start and <span>Space</span> to jump
+            {/* Press <span>Enter</span> to start and <span>Space</span> to jump */}
+            Press <span>Enter</span> to start the first round!
           </div>
         </div>
       </div>
@@ -47,11 +51,11 @@ function DeadVisorContent({ score }) {
   return (
     <Html fullscreen={true}>
       <div className='visor'>
-        <div className='visor-big'>YOU DIED</div>
+        <div className='visor-big'>ROUND OVER</div>
         <div className='visor-small'>
           <div>
-            Your score was <span>{score}</span>. Press <span>Enter</span> to
-            start again.
+            Everyone died. The highest score was <span>{score}</span>. Press{' '}
+            <span>Enter</span> to start the next round.
           </div>
         </div>
       </div>
@@ -59,9 +63,10 @@ function DeadVisorContent({ score }) {
   );
 }
 
-function ScoreContent({ score }) {
+function ScoreContent({ score, round }) {
   return (
     <Html fullscreen={true}>
+      <div className='score'> Round: {round}</div>
       <div className='score'> Score: {score}</div>
     </Html>
   );

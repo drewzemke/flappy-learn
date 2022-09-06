@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useFlappyNeuralNetwork } from '../ai/FlappyNN';
 import { Bird } from '../game-elements/Bird';
 import { Pipe } from '../game-elements/Pipe';
 import { useStore } from '../game-model/store';
@@ -6,14 +7,16 @@ import { usePlayerControl } from '../hooks/controlHooks';
 import { GameVisor } from './GameVisor';
 
 export default function GameEngine() {
-  const { actions, score, runState, bird, pipes, initialized } = useStore();
+  const { actions, score, round, runState, birds, pipes, initialized } =
+    useStore();
 
-  function handleJump(event) {
-    if (!event || event.code === 'Space') {
-      actions.jump();
-    }
-  }
-  usePlayerControl(handleJump);
+  // Allow the player to jump using the spacebar
+  // function handleJump(event) {
+  //   if (!event || event.code === 'Space') {
+  //     actions.jump();
+  //   }
+  // }
+  // usePlayerControl(handleJump);
 
   // Use the enter key to start/restart the game
   function handleEnter(event) {
@@ -33,20 +36,30 @@ export default function GameEngine() {
     actions.init();
   }, []);
 
+  // Subscribe the NN to updates
+  useFlappyNeuralNetwork();
+
   // NO REFS?!?! Thanks Zustand!
   return (
     <>
       <GameVisor
+        round={round}
         score={score}
         runState={runState}
       />
       {initialized ? (
         <>
-          <Bird position={bird.position} />
-          {pipes.map((el, index) => (
+          {birds.map((bird, index) => (
+            <Bird
+              key={index}
+              position={bird.position}
+              isAlive={bird.isAlive}
+            />
+          ))}
+          {pipes.map((pipe, index) => (
             <Pipe
               key={index}
-              position={pipes[index].position}
+              position={pipe.position}
             />
           ))}
         </>

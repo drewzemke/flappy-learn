@@ -9,21 +9,38 @@ export const RunState = {
 
 export class BirdModel {
   constructor(
-    posY = GameConstants.BIRD_INITIAL_Y,
+    y = GameConstants.BIRD_INITIAL_Y,
     velY = GameConstants.BIRD_INITIAL_VEL
   ) {
-    this._posY = posY;
+    this._x = GameConstants.BIRD_X;
+    this._y = y;
     this._velY = velY;
+    this._isAlive = true;
   }
   triggerJump() {
     this._velY = GameConstants.BIRD_JUMP_VEL;
   }
   tick(delta) {
-    this._velY -= GameConstants.GRAVITY * delta;
-    this._posY += this._velY * delta;
+    if (this._isAlive) {
+      this._velY -= GameConstants.GRAVITY * delta;
+      this._y += this._velY * delta;
+    } else {
+      if (this._x >= -GameConstants.SCREEN_WIDTH) {
+        this._x -= GameConstants.PIPE_SPEED * delta;
+      }
+    }
   }
   get position() {
-    return { x: GameConstants.BIRD_X, y: this._posY };
+    return { x: this._x, y: this._y };
+  }
+  get vertVelocity() {
+    return this._velY;
+  }
+  kill() {
+    this._isAlive = false;
+  }
+  get isAlive() {
+    return this._isAlive;
   }
 }
 
@@ -51,15 +68,16 @@ export class PipeModel {
   }
 }
 
+// Returns a nonempty message if a collision was detect, null if not.
 export function testRoomCollisions(birdPos) {
   // First, check if we've hit the top or bottom
   if (
     Math.abs(birdPos.y) + GameConstants.BIRD_RADIUS >
     GameConstants.SCREEN_HEIGHT / 2 + GameConstants.COLLISION_TOLERANCE
   ) {
-    console.log('Died by hitting the top or bottom of the screen');
-    return true;
+    return 'died by hitting the top or bottom of the screen';
   }
+  return null;
 }
 
 export function testPipeCollisions(birdPos, pipePos) {
@@ -70,8 +88,7 @@ export function testPipeCollisions(birdPos, pipePos) {
       Math.abs(birdPos.x - pipePos.x) - GameConstants.BIRD_RADIUS <
       GameConstants.PIPE_WIDTH / 2 - GameConstants.COLLISION_TOLERANCE
     ) {
-      console.log('Died by hitting the side of a pipe');
-      return true;
+      return 'died by hitting the side of a pipe';
     }
   }
 
@@ -82,8 +99,7 @@ export function testPipeCollisions(birdPos, pipePos) {
       Math.abs(birdPos.y - pipePos.y) + GameConstants.BIRD_RADIUS >
       GameConstants.PIPE_GAP_SIZE / 2 + GameConstants.COLLISION_TOLERANCE
     ) {
-      console.log('Died by hittng the top or bottom of a pipe');
-      return true;
+      return 'died by hittng the top or bottom of a pipe';
     }
   }
 
@@ -103,9 +119,8 @@ export function testPipeCollisions(birdPos, pipePos) {
   );
 
   if (dist < GameConstants.BIRD_RADIUS - GameConstants.COLLISION_TOLERANCE) {
-    console.log('Died by hitting a corner');
-    return true;
+    return 'died by hitting a corner';
   }
 
-  return false;
+  return null;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { GameConstants } from '../game-model/GameConstants';
 
-export function Bird({ position }) {
+export function Bird({ position, isAlive }) {
   return (
     <mesh position={[position.x, position.y, 0]}>
       <sphereGeometry args={[GameConstants.BIRD_RADIUS, 10, 10]} />
@@ -13,7 +13,7 @@ export function Bird({ position }) {
           1
         ]}
       /> */}
-      <meshBasicMaterial color={'goldenrod'} />
+      <meshBasicMaterial color={isAlive ? 'goldenrod' : 'grey'} />
     </mesh>
   );
 }
