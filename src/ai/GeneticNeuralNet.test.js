@@ -27,3 +27,17 @@ test('should be able to compute a NN output', () => {
   expect(output).not.toBe(null);
   expect(output).toBeDefined();
 });
+
+test('should be able to make two NNs and have them reproduce', () => {
+  const sig = [2, 3, 1];
+  const net1 = new GeneticNeuralNetwork(sig);
+  net1.initRandom(0, 1);
+  console.log(net1.toString());
+  const net2 = new GeneticNeuralNetwork(sig);
+  net2.initRandom(0, 1);
+  console.log(net2.toString());
+  const baby = GeneticNeuralNetwork.reproduce(net1, net2, 0.2, 0.1);
+  console.log(baby.toString());
+  expect(baby).not.toBe(null);
+  expect(baby).toBeDefined();
+});

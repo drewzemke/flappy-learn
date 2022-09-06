@@ -41,8 +41,16 @@ export class GeneticNeuralNetwork {
     return this._weights;
   }
 
+  set weights(newWeights) {
+    this._weights = newWeights;
+  }
+
   get biases() {
     return this._biases;
+  }
+
+  set biases(newBiases) {
+    this._biases = newBiases;
   }
 
   // Random initialization method (parameters: mean and stddev??)
@@ -77,12 +85,60 @@ export class GeneticNeuralNetwork {
   }
 
   // Static method to combine two neural nets with the same signature
-  // to generate offspring
+  // to generate a single offspring. Builds a neural net where each
+  // weight or bias comes from one of the parents (with equal probability).
+  // Each new weight/bias is mutated with probability 'mutationRate,' in which case
+  // it is shifted by a value sampled from a normal distribution (ONCE I IMPLEMENT THAT)
   //
   // Params:
   //  - two neural nets (duh)
-  //  - mutation rate (probability)
+  //  - mutation rate (probability)  <--- actually do we need this?? hmmmm
   //  - mutation stddev [need to look up the normal distribution function...]
+  //       ^ this should probably be small relative to the overall variance of both parents
+  static reproduce(parent1, parent2, mutationRate, mutationStddev) {
+    // This should equal the signature of the other parent. If it doesn't, we're in trouble...
+    const signature = parent1.signature;
+
+    // Create a new NN
+    const theBaby = new GeneticNeuralNetwork(signature);
+
+    // Temporary mutation randomness
+    // REPLACE WITH THE NORMAL DIST PLZ
+    const genMutation = () => mutationStddev * (2 * Math.random() - 1);
+
+    // Iterate through and choose new weights and biases for the baby based on the parents
+    const newWeights = theBaby.weights.map((matrix, matrixIndex) =>
+      matrix.map((row, rowIndex) =>
+        row.map((element, elIndex) => {
+          // Randomly choose a parent to inhert this weight from
+          const chosenParent = Math.random() < 0.5 ? parent1 : parent2;
+          let newEl = chosenParent.weights[matrixIndex][rowIndex][elIndex];
+          // Decide whether to mutate
+          if (Math.random() < mutationRate) {
+            newEl += genMutation();
+          }
+          return newEl;
+        })
+      )
+    );
+    theBaby.weights = newWeights;
+
+    const newBiases = theBaby.biases.map((vector, vectorIndex) =>
+      vector.map((el, elIndex) => {
+        // Randomly choose a parent to inhert this bias from
+        const chosenParent = Math.random() < 0.5 ? parent1 : parent2;
+        let newEl = chosenParent.biases[vectorIndex][elIndex];
+        // Decide whether to mutate
+        if (Math.random() < mutationRate) {
+          newEl += genMutation();
+        }
+        return newEl;
+      })
+    );
+    theBaby.biases = newBiases;
+
+    return theBaby;
+  }
 
   // Nicely display an NN.
   toString() {
