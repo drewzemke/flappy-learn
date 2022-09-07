@@ -4,7 +4,8 @@ import { GameConstants } from './GameConstants';
 export const RunState = {
   WAITING_TO_START: 0,
   RUNNING: 1,
-  DEAD: 3,
+  DEAD: 2,
+  RESTARTING: 3,
 };
 
 export class BirdModel {

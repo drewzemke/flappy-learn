@@ -1,14 +1,23 @@
 import React, { useEffect } from 'react';
-import { useFlappyNeuralNetwork } from '../ai/FlappyNN';
-import { Bird } from '../game-elements/Bird';
-import { Pipe } from '../game-elements/Pipe';
+import { useFlappyNeuralNetworks } from '../ai/FlappyNN';
+import { Bird } from './game-elements/Bird';
+import { Pipe } from './game-elements/Pipe';
+import { RunState } from '../game-model/FlappyGameModel';
 import { useStore } from '../game-model/store';
-import { usePlayerControl } from '../hooks/controlHooks';
+// import { usePlayerControl } from '../hooks/controlHooks';
 import { GameVisor } from './GameVisor';
 
 export default function GameEngine() {
-  const { actions, score, round, runState, birds, pipes, initialized } =
-    useStore();
+  const {
+    actions,
+    score,
+    lastRoundScore,
+    round,
+    runState,
+    birds,
+    pipes,
+    initialized,
+  } = useStore();
 
   // Allow the player to jump using the spacebar
   // function handleJump(event) {
@@ -18,9 +27,14 @@ export default function GameEngine() {
   // }
   // usePlayerControl(handleJump);
 
+  if (runState === RunState.DEAD) {
+    actions.prepareToRestart();
+    setTimeout(actions.start, 1000);
+  }
+
   // Use the enter key to start/restart the game
   function handleEnter(event) {
-    if (event.code === 'Enter') {
+    if (event.code === 'Enter' && runState === RunState.WAITING_TO_START) {
       actions.start();
     }
   }
@@ -29,15 +43,17 @@ export default function GameEngine() {
     return () => {
       window.removeEventListener('keydown', handleEnter);
     };
+    // eslint-disable-next-line
   }, []);
 
   // Initialize the model
   useEffect(() => {
     actions.init();
+    // eslint-disable-next-line
   }, []);
 
   // Subscribe the NN to updates
-  useFlappyNeuralNetwork();
+  useFlappyNeuralNetworks();
 
   // NO REFS?!?! Thanks Zustand!
   return (
@@ -45,7 +61,9 @@ export default function GameEngine() {
       <GameVisor
         round={round}
         score={score}
+        lastRoundScore={lastRoundScore}
         runState={runState}
+        numAlive={birds.filter(bird => bird.isAlive).length}
       />
       {initialized ? (
         <>

@@ -1,5 +1,8 @@
-import { GameConstants } from './GameConstants';
+import { addEffect } from '@react-three/fiber';
 import create from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
+import { GameConstants } from './GameConstants';
+import { SimulationConstants } from '../ai/SimulationConstants';
 import {
   RunState,
   BirdModel,
@@ -7,8 +10,7 @@ import {
   testRoomCollisions,
   testPipeCollisions,
 } from './FlappyGameModel';
-import { addEffect } from '@react-three/fiber';
-import { subscribeWithSelector } from 'zustand/middleware';
+import { GeneticNeuralNetwork } from '../ai/GeneticNeuralNet';
 
 export const useStore = create(
   subscribeWithSelector((set, get) => {
@@ -22,6 +24,8 @@ export const useStore = create(
       activePipeIndex: 0,
       round: 0,
       neuralNets: [],
+      addEffectUnsub: null,
+      lastRoundScore: 0,
 
       // Hi Drew.
       //
@@ -36,16 +40,28 @@ export const useStore = create(
         // sets or resets the game
         init: () => {
           if (!get().initialized) {
-            set({ initialized: true }); // We're doing it!
-
             // Initialize the neural nets
-            // ...
+            const neuralNets = Array.from(
+              { length: SimulationConstants.NUM_BIRDS },
+              () => {
+                const neuralNet = new GeneticNeuralNetwork(
+                  SimulationConstants.NN_SIGNATURE
+                );
+                neuralNet.initRandom(
+                  SimulationConstants.NN_INIT_MEAN,
+                  SimulationConstants.NN_INIT_STDDEV
+                );
+                return neuralNet;
+              }
+            );
+
+            set({ initialized: true, neuralNets: neuralNets }); // We're doing it!
           }
 
           // Make some birds
           // Array.from to the rescue!
           const birds = Array.from(
-            { length: GameConstants.NUM_BIRDS },
+            { length: SimulationConstants.NUM_BIRDS },
             () => new BirdModel()
           );
 
@@ -73,11 +89,22 @@ export const useStore = create(
             activePipeIndex: 0,
           });
 
-          // Do the following each frame...
-          addEffect(() => {
+          // Use addEffect to do frame-by-frame computations
+          // (First, clear the old addEffect subscription if there is one)
+          if (get().addEffectUnsub) {
+            get().addEffectUnsub();
+          }
+          const unsub = addEffect(() => {
             // Don't do shit unless the game is running
             const { runState, lastRenderTime } = get();
             if (runState !== RunState.RUNNING) return;
+
+            // Update the score if we're scoring with frames
+            if ((GameConstants.SCORE_METHOD = 'frames')) {
+              set(state => ({
+                score: state.score + 1,
+              }));
+            }
 
             // Compute the time since the last render
             const now = Date.now();
@@ -117,10 +144,14 @@ export const useStore = create(
               pipes[activePipeIndex].position.x <
               GameConstants.BIRD_X - GameConstants.BIRD_RADIUS
             ) {
-              set(state => ({
+              set({
                 activePipeIndex: (activePipeIndex + 1) % pipes.length,
-                score: state.score + 1,
-              }));
+              });
+              if ((GameConstants.SCORE_METHOD = 'pipes')) {
+                set(state => ({
+                  score: state.score + 1,
+                }));
+              }
             }
 
             // 3: Check for collisions between each bird and the active pipe
@@ -138,34 +169,49 @@ export const useStore = create(
               }
             });
           });
+
+          set({ addEffectUnsub: unsub });
         },
 
         jump: index => {
           get().birds[index].triggerJump();
         },
 
+        prepareToRestart: () => {
+          console.log('Restarting game!');
+          set(state => ({
+            lastRoundScore: state.score,
+          }));
+          get().actions.init();
+          set(state => ({
+            runState: RunState.RESTARTING,
+            round: state.round + 1,
+            neuralNets: GeneticNeuralNetwork.makeNewGeneration(
+              state.neuralNets
+            ),
+          }));
+        },
+
         start: () => {
-          const { runState, actions } = get();
-          if (runState === RunState.WAITING_TO_START) {
+          if (get().runState === RunState.WAITING_TO_START) {
             console.log('Starting game!');
             set({ round: 1 });
+            set({ lastRenderTime: Date.now(), runState: RunState.RUNNING });
           }
 
-          if (runState === RunState.DEAD) {
-            console.log('Restarting game!');
-            actions.init();
-            set(state => ({ round: state.round + 1 }));
-            // Do something here to make a new generation of neural nets!
-            // ...
+          if (get().runState === RunState.RESTARTING) {
+            set({ lastRenderTime: Date.now(), runState: RunState.RUNNING });
           }
-          set({ lastRenderTime: Date.now(), runState: RunState.RUNNING });
         },
 
         triggerDeath: (birdIndex, message) => {
-          const { birds } = get();
+          const { birds, score, neuralNets } = get();
           birds[birdIndex].kill();
 
-          console.log(`Bird #${birdIndex} ${message}`);
+          // console.log(`Bird #${birdIndex} ${message}`);
+
+          // Update the fitness of the corresponding NN.
+          neuralNets[birdIndex].fitness = score;
 
           // Check if all of the birds are dead.
           if (birds.every(bird => !bird.isAlive)) {

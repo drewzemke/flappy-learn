@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameConstants } from '../game-model/GameConstants';
+import { GameConstants } from '../../game-model/GameConstants';
 
 export function Bird({ position, isAlive }) {
   return (

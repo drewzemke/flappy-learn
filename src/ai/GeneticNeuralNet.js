@@ -1,4 +1,10 @@
-import { addVectors, applyMatrix, dot, sigmoid } from './mathServices';
+import {
+  addVectors,
+  applyMatrix,
+  sampleWeightedList,
+  sigmoid,
+} from './mathServices';
+import { SimulationConstants } from './SimulationConstants';
 
 export class GeneticNeuralNetwork {
   // The 'signature' is an array that specifies the number of neurons in each layer of the NN.
@@ -70,6 +76,10 @@ export class GeneticNeuralNetwork {
   // Forward compute!
   // Should probably include some error handling in here just in case sizes don't line up?
   compute(input) {
+    // console.log('computing with NN');
+    // console.log(this.toString());
+    // console.log(`input: ${input}`);
+
     let vec = input;
     // Iterate through the layers
     for (let i = 0; i < this._signature.length - 1; i++) {
@@ -138,6 +148,78 @@ export class GeneticNeuralNetwork {
     theBaby.biases = newBiases;
 
     return theBaby;
+  }
+
+  // Takes an (even-sized) collection of neural networks and generates the next
+  // generation. But how?
+  //
+  //
+  static makeNewGeneration(neuralNets) {
+    console.log('Creating the next generation of neural nets');
+    // First, sort by fitness.
+    const sortedNNs = [...neuralNets].sort(
+      (net1, net2) => net2.fitness - net1.fitness
+    );
+
+    const newNNs = [];
+
+    // Here's one way to do this...
+    // Take the top 50% and have them pair off and make 4 children each.
+    if (SimulationConstants.REP_METHOD === 'pairs') {
+      for (let i = 0; i < SimulationConstants.NUM_BIRDS / 2; i += 2) {
+        Array(4)
+          .fill(0)
+          .forEach(() =>
+            newNNs.push(
+              GeneticNeuralNetwork.reproduce(
+                sortedNNs[i],
+                sortedNNs[i + 1],
+                SimulationConstants.NN_REP_MUTATION_RATE,
+                SimulationConstants.NN_REP_MUTATION_STDDEV
+              )
+            )
+          );
+      }
+    }
+
+    // Here's another way to do it...
+    if (SimulationConstants.REP_METHOD === 'weighted') {
+      // Create a list of weights to use to select at random.
+      // Let's try squaring the weights to emphasize higher scores
+      const lowestFitness = sortedNNs[sortedNNs.length - 1];
+      const weights = sortedNNs.map(nn => nn.fitness - lowestFitness);
+      const totalWeight = weights.reduce((a, b) => a + b, 0);
+      const normalizedWeights = weights.map(w => w / totalWeight);
+      // console.log(weights);
+
+      // Use the weights to randomly select parents for babies
+      while (newNNs.length < neuralNets.length) {
+        const parent1 =
+          neuralNets[
+            sampleWeightedList(
+              normalizedWeights,
+              SimulationConstants.WEIGHTED_MAX_QUOTA
+            )
+          ];
+        const parent2 =
+          neuralNets[
+            sampleWeightedList(
+              normalizedWeights,
+              SimulationConstants.WEIGHTED_MAX_QUOTA
+            )
+          ];
+        newNNs.push(
+          GeneticNeuralNetwork.reproduce(
+            parent1,
+            parent2,
+            SimulationConstants.NN_REP_MUTATION_RATE,
+            SimulationConstants.NN_REP_MUTATION_STDDEV
+          )
+        );
+      }
+    }
+
+    return newNNs;
   }
 
   // Nicely display an NN.

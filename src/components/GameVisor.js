@@ -2,13 +2,19 @@ import { Html } from '@react-three/drei';
 import { RunState } from '../game-model/FlappyGameModel';
 import '../styles/visorStyles.css';
 
-export function GameVisor({ round, score, runState }) {
+export function GameVisor({
+  round,
+  score,
+  lastRoundScore,
+  runState,
+  numAlive,
+}) {
   return (
     <>
       {runState !== RunState.RUNNING ? (
         <>
-          {runState === RunState.DEAD ? (
-            <DeadVisorContent score={score} />
+          {runState === RunState.DEAD || runState === RunState.RESTARTING ? (
+            <DeadVisorContent score={lastRoundScore} />
           ) : (
             <IntroVisorContent />
           )}
@@ -25,6 +31,8 @@ export function GameVisor({ round, score, runState }) {
         <ScoreContent
           round={round}
           score={score}
+          lastRoundScore={lastRoundScore}
+          numAlive={numAlive}
         />
       )}
     </>
@@ -63,11 +71,13 @@ function DeadVisorContent({ score }) {
   );
 }
 
-function ScoreContent({ score, round }) {
+function ScoreContent({ score, round, lastRoundScore, numAlive }) {
   return (
     <Html fullscreen={true}>
       <div className='score'> Round: {round}</div>
+      <div className='score'> Prev. High Score: {lastRoundScore}</div>
       <div className='score'> Score: {score}</div>
+      <div className='score'> Alive: {numAlive}</div>
     </Html>
   );
 }

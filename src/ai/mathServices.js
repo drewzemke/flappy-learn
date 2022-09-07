@@ -14,3 +14,18 @@ export function addVectors(u, v) {
 export function sigmoid(z) {
   return 1.0 / (1 + Math.exp(-z));
 }
+
+// Returns a randomly selected index from a sorted list of weights
+// - The values in 'weights' must add to one!
+// - 'maxQuota' is a number between 0 and 1 that reduces the amount
+//   range from which the index is picked.
+export function sampleWeightedList(weights, maxQuota) {
+  let weightRemaining = maxQuota * Math.random();
+  let index = -1;
+  while (weightRemaining > 0) {
+    index++;
+    weightRemaining -= weights[index];
+  }
+  console.log(`Selecting parent ${index}`);
+  return index;
+}

@@ -2,22 +2,28 @@ import { useStore } from '../game-model/store';
 import { useEffect } from 'react';
 import { GameConstants } from '../game-model/GameConstants';
 
-export function useFlappyNeuralNetwork() {
+export function useFlappyNeuralNetworks() {
   useEffect(() => {
-    useStore.subscribe(
-      state => ({
-        birds: state.birds,
-        pipes: state.pipes,
-        activePipeIndex: state.activePipeIndex,
-        triggerJump: state.actions.jump,
-      }),
-      ({ birds, pipes, activePipeIndex, triggerJump }) => {
-        const input = getNNPackage(birds[0], pipes, activePipeIndex);
-        if (input[0] < 0) {
-          triggerJump(0);
-        }
+    const unsub = useStore.subscribe(
+      ({ birds, pipes, activePipeIndex, neuralNets, score, actions }) => {
+        // Iterate over the birds
+        birds.forEach((bird, index) => {
+          // We don't do shit for dead birds.
+          if (!bird.isAlive) {
+            return;
+          }
+
+          // Otherwise, gather input for this bird and compute the
+          // output using the NN.
+          const input = getNNPackage(bird, pipes, activePipeIndex);
+          const [output] = neuralNets[index].compute(input);
+          // console.log(output);
+          // If the output was bigger than 1/2, jump!
+          if (output > 0.5) actions.jump(index);
+        });
       }
     );
+    return () => unsub();
   }, []);
 }
 
