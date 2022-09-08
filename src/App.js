@@ -3,10 +3,33 @@ import GameEngine from './components/GameEngine';
 import { Canvas } from '@react-three/fiber';
 import { GameConstants } from './game-model/GameConstants';
 import { Stats } from '@react-three/drei';
+// import { useState, useEffect } from 'react';
 
 const SCALE = 100;
 
 function App() {
+  // const [windowFocused, setWindowFocused] = useState('never');
+
+  // const onFocus = () => {
+  //   console.log('focus');
+  //   setWindowFocused('always');
+  // };
+
+  // const onBlur = () => {
+  //   console.log('blur');
+  //   setWindowFocused('never');
+  // };
+
+  // useEffect(() => {
+  //   window.addEventListener('focus', onFocus);
+  //   window.addEventListener('blur', onBlur);
+  //   onFocus();
+  //   return () => {
+  //     window.removeEventListener('focus', onFocus);
+  //     window.removeEventListener('blur', onBlur);
+  //   };
+  // }, []);
+
   return (
     <div
       style={{
@@ -24,6 +47,7 @@ function App() {
           left: -GameConstants.SCREEN_WIDTH / 2,
           right: GameConstants.SCREEN_WIDTH / 2,
         }}
+        // frameloop={windowFocused}
       >
         <color
           attach='background'

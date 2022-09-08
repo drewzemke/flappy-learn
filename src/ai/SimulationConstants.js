@@ -4,7 +4,7 @@ export const SimulationConstants = {
 
   // Signature for each neural network
   // This has to start with 5 and end with 1, but can have entries in between
-  NN_SIGNATURE: [5, 6, 1],
+  NN_SIGNATURE: [5, 2, 1],
 
   // Constants for NN creation and reproduction:
   NN_INIT_MEAN: 0,
