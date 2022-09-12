@@ -1,63 +1,48 @@
-import './App.css';
-import GameEngine from './components/GameEngine';
-import { Canvas } from '@react-three/fiber';
-import { GameConstants } from './game-model/GameConstants';
-import { Stats } from '@react-three/drei';
-// import { useState, useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import GameContainer from './components/GameContainer';
+import MainMenu from './components/menus/MainMenu';
+import SettingsMenu from './components/menus/SettingsMenu';
+import styled from 'styled-components';
 
-const SCALE = 100;
+// NEED TO BRING THESE IN FROM SOMEWHERE ELSE...
+const SCREEN_WIDTH = 8;
+const SCREEN_HEIGHT = 4.5;
 
-function App() {
-  // const [windowFocused, setWindowFocused] = useState('never');
+const AppContainer = styled.div`
+  width: ${100 * SCREEN_WIDTH}px;
+  height: ${100 * SCREEN_HEIGHT}px;
+  background: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  overflow: hidden;
+`;
 
-  // const onFocus = () => {
-  //   console.log('focus');
-  //   setWindowFocused('always');
-  // };
-
-  // const onBlur = () => {
-  //   console.log('blur');
-  //   setWindowFocused('never');
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('focus', onFocus);
-  //   window.addEventListener('blur', onBlur);
-  //   onFocus();
-  //   return () => {
-  //     window.removeEventListener('focus', onFocus);
-  //     window.removeEventListener('blur', onBlur);
-  //   };
-  // }, []);
-
+export default function App() {
   return (
-    <div
-      style={{
-        width: `${GameConstants.SCREEN_WIDTH * SCALE}px`,
-        height: `${GameConstants.SCREEN_HEIGHT * SCALE}px`,
-      }}
-    >
-      <Canvas
-        orthographic
-        camera={{
-          zoom: SCALE,
-          position: [0, 0, 1],
-          top: GameConstants.SCREEN_HEIGHT / 2,
-          bottom: -GameConstants.SCREEN_HEIGHT / 2,
-          left: -GameConstants.SCREEN_WIDTH / 2,
-          right: GameConstants.SCREEN_WIDTH / 2,
-        }}
-        // frameloop={windowFocused}
-      >
-        <color
-          attach='background'
-          args={['black']}
+    <AppContainer>
+      <Routes>
+        <Route
+          path='/'
+          element={<MainMenu />}
         />
-        <GameEngine />;
-        <Stats />
-      </Canvas>
-    </div>
+        <Route
+          path='/humangame'
+          element={<GameContainer isPlayerHuman={true} />}
+        />
+        <Route
+          path='/aigame'
+          element={<GameContainer isPlayerHuman={false} />}
+        />
+
+        <Route
+          path='/settings'
+          element={<SettingsMenu />}
+        />
+      </Routes>
+    </AppContainer>
   );
 }
-
-export default App;

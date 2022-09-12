@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei';
-import { RunState } from '../game-model/FlappyGameModel';
+import { RunState } from '../game-model/RunState';
 import '../styles/visorStyles.css';
 
 export function GameVisor({

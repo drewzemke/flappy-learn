@@ -1,4 +1,10 @@
-import { addVectors, applyMatrix, dot, sigmoid } from './mathServices';
+import {
+  addVectors,
+  applyMatrix,
+  dot,
+  normalRandom,
+  sigmoid,
+} from './mathServices';
 
 test('dot product should work', () => {
   const u = [1, 2, 3];
@@ -24,4 +30,11 @@ test('matrix multiplication should work', () => {
   ];
   const u = [1, 2, 3];
   expect(applyMatrix(M, u)).toStrictEqual([14, 10]);
+});
+
+test('sampling random distribution should work ', () => {
+  let vals = Array(10).fill(0);
+  vals = vals.map(val => normalRandom());
+  console.log(vals);
+  expect(vals.length).toBeGreaterThan(0);
 });

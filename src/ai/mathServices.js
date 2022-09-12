@@ -15,6 +15,24 @@ export function sigmoid(z) {
   return 1.0 / (1 + Math.exp(-z));
 }
 
+// An approximate normally-distributed random number. Higher samples
+// make the distribution closer to normal. Central Limit Theorem, babyyyyy
+export function normalRandom(mean = 0, stddev = 1, samples = 6) {
+  // Sample the uniform distribution a bunch of times
+  let result = 0;
+  for (let i = 0; i < samples; i++) result += Math.random();
+
+  // The sum is roughly normally distributed with mean 'samples/2' and stddev 'sqrt(samples/12)'
+  // see: https://en.wikipedia.org/wiki/Irwin%E2%80%93Hall_distribution
+
+  // Translate and scale obtain a standard normally-distributed value:
+  result -= samples / 2;
+  result /= Math.sqrt(samples / 12);
+
+  // Then scale and translate to get the desired mean and stddev:
+  return stddev * result + mean;
+}
+
 // Returns a randomly selected index from a sorted list of weights
 // - The values in 'weights' must add to one!
 // - 'maxQuota' is a number between 0 and 1 that reduces the amount

@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
-import { useFlappyNeuralNetworks } from '../ai/FlappyNN';
 import { Bird } from './game-elements/Bird';
 import { Pipe } from './game-elements/Pipe';
-import { RunState } from '../game-model/FlappyGameModel';
-import { useStore } from '../game-model/store';
-// import { usePlayerControl } from '../hooks/controlHooks';
+import { useStore } from '../state/stateManagement';
 import { GameVisor } from './GameVisor';
+import { RunState } from '../game-model/RunState';
+import { useControls } from '../hooks/controlHooks';
 
-export default function GameEngine() {
+export default function GameEngine({ isPlayerHuman }) {
   const {
     actions,
     score,
@@ -17,43 +16,38 @@ export default function GameEngine() {
     birds,
     pipes,
     initialized,
-  } = useStore();
+    gameSettings,
+  } = useStore(); // update to include a selector???
 
-  // Allow the player to jump using the spacebar
-  // function handleJump(event) {
-  //   if (!event || event.code === 'Space') {
-  //     actions.jump();
-  //   }
-  // }
-  // usePlayerControl(handleJump);
-
+  // Automatically resets the game after a second -- REMOVE EVENTUALLY!
   if (runState === RunState.DEAD) {
     actions.prepareToRestart();
     setTimeout(actions.start, 1000);
   }
 
-  // Use the enter key to start/restart the game
-  function handleEnter(event) {
+  // Initialize the model
+  useEffect(() => {
+    actions.init(isPlayerHuman);
+    return actions.unInit;
+    // eslint-disable-next-line
+  }, []);
+
+  // This function deals with these key presses:
+  // - Enter: start the game or simulation
+  // - Esc: pause menu
+  // - Spacebar: jump (if player controls)
+  function handleKeyDown(event) {
     if (event.code === 'Enter' && runState === RunState.WAITING_TO_START) {
       actions.start();
     }
+    if (event.code === 'Escape') {
+      // Do something here eventually
+    }
+    if (isPlayerHuman && event.code === 'Space') {
+      actions.jump(0);
+    }
   }
-  useEffect(() => {
-    window.addEventListener('keydown', handleEnter);
-    return () => {
-      window.removeEventListener('keydown', handleEnter);
-    };
-    // eslint-disable-next-line
-  }, []);
-
-  // Initialize the model
-  useEffect(() => {
-    actions.init();
-    // eslint-disable-next-line
-  }, []);
-
-  // Subscribe the NN to updates
-  useFlappyNeuralNetworks();
+  useControls(isPlayerHuman, handleKeyDown);
 
   // NO REFS?!?! Thanks Zustand!
   return (
@@ -71,13 +65,16 @@ export default function GameEngine() {
             <Bird
               key={index}
               position={bird.position}
+              vertVelocity={bird.vertVelocity}
               isAlive={bird.isAlive}
+              gameSettings={gameSettings}
             />
           ))}
           {pipes.map((pipe, index) => (
             <Pipe
               key={index}
               position={pipe.position}
+              gameSettings={gameSettings}
             />
           ))}
         </>
@@ -88,9 +85,13 @@ export default function GameEngine() {
 }
 
 function BackgroundPanel() {
+  const gameSettings = useStore(state => state.gameSettings);
+
   return (
     <mesh position={[0, 0, -0.1]}>
-      <planeGeometry args={[8, 4.5, 1, 1]} />
+      <planeGeometry
+        args={[gameSettings.screenWidth, gameSettings.screenHeight, 1, 1]}
+      />
       <meshBasicMaterial
         // wireframe
         color={'skyblue'}
