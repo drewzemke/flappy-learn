@@ -5,18 +5,9 @@ import { useStore } from '../state/stateManagement';
 import { GameState } from '../state/gameStore';
 import useControls from '../hooks/useControls';
 
-export default function GameEngine({ isPlayerHuman }) {
-  const {
-    actions,
-    score,
-    lastRoundScore,
-    round,
-    birds,
-    pipes,
-    initialized,
-    gameSettings,
-    gameState,
-  } = useStore(); // update to include a selector???
+export default function GameEngine({ containerRef, isPlayerHuman }) {
+  const { actions, birds, pipes, initialized, gameSettings, gameState } =
+    useStore(); // TODO: update to include a selector???
 
   // Initialize the model
   useEffect(() => {
@@ -30,39 +21,58 @@ export default function GameEngine({ isPlayerHuman }) {
   const gameStateRef = useRef();
   gameStateRef.current = gameState;
 
-  // This function deals with these key presses:
-  // - Enter: start the game or simulation
-  // - Esc: pause menu
-  // - Spacebar: jump (if player controls)
-  const handleKeyDown = event => {
+  // Deals with various possible key presses or pointer clicks/taps
+  const handleInput = event => {
     event.preventDefault();
-    if (event.code === 'Enter') {
+    // Space or click
+    // Start the game if the game is in a waiting state, but
+    // also check if we need to prep the first round
+    if (
+      (event.type === 'keydown' && event.code === 'Space') ||
+      event.type === 'pointerdown'
+    ) {
       if (
-        [GameState.PLAYER_INTRO_SCREEN, GameState.AI_SETTINGS].includes(
-          gameStateRef.current
-        )
+        [
+          GameState.PLAYER_INTRO_SCREEN,
+          GameState.AI_SETTINGS,
+          GameState.PLAYER_PAUSED,
+          GameState.AI_PAUSED,
+        ].includes(gameStateRef.current)
       ) {
-        actions.prepNextRound();
         actions.start();
+        return;
       }
       if (
         [GameState.PLAYER_DEAD, GameState.AI_DEAD].includes(
           gameStateRef.current
         )
       ) {
+        actions.prepNextRound();
         actions.start();
+        return;
       }
     }
-    if (event.code === 'Escape') {
-      // Do something here eventually
+    // Escape
+    // Open/close the pause menu
+    if (event.type === 'keydown' && event.code === 'Escape') {
+      // Pause the game
+      actions.pauseGame();
+      return;
     }
-    if (isPlayerHuman && event.code === 'Space') {
+    // Space or click
+    // If there's a human playing, make the bird jump
+    if (
+      isPlayerHuman &&
+      ((event.type === 'keydown' && event.code === 'Space') ||
+        event.type === 'pointerdown')
+    ) {
       actions.jump(0);
+      return;
     }
   };
-  useControls(isPlayerHuman, handleKeyDown);
 
-  // NO REFS?!?! Thanks Zustand!
+  useControls(handleInput, isPlayerHuman, containerRef);
+
   return (
     <>
       {initialized ? (

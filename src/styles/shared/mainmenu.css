@@ -14,7 +14,7 @@
   display: flex;
   justify-content: center;
   text-decoration: none;
-  color: var(--text-color-light);
+  color: var(--overlay-text-color);
 }
 
 .main-menu-link:hover {

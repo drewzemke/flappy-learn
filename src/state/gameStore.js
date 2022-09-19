@@ -200,19 +200,6 @@ export const gameSlice = (set, get) => ({
 
       // Update the fitness of the corresponding NN.
       if (neuralNets[birdIndex]) neuralNets[birdIndex].fitness = score;
-
-      // Check if all of the birds are dead.
-      //
-      // TODO: set a brief (0.5s?) timer to do this instead?
-      //
-      if (birds.every(bird => !bird.isAlive)) {
-        if (get().gameState === GameState.PLAYER_PLAYING) {
-          set({ gameState: GameState.PLAYER_DEAD });
-        }
-        if (get().gameState === GameState.AI_PLAYING) {
-          set({ gameState: GameState.AI_DEAD });
-        }
-      }
     },
 
     // Called every frame
@@ -297,12 +284,21 @@ export const gameSlice = (set, get) => ({
           if (collision) get().actions.triggerDeath(index, collision);
         }
       });
+
+      // Check if all of the birds are dead and have scrolled offscreen
+      if (birds.every(bird => bird.isOffScreen)) {
+        if (get().gameState === GameState.PLAYER_PLAYING) {
+          set({ gameState: GameState.PLAYER_DEAD });
+        }
+        if (get().gameState === GameState.AI_PLAYING) {
+          set({ gameState: GameState.AI_DEAD });
+        }
+      }
     },
 
     // Use this to reset shit between game sessions.
     // (Like, everything should reset when we go back to the menu)
     unInit: () => {
-      console.log('uninit');
       set({ initialized: false, gameState: GameState.NO_GAME });
     },
   },

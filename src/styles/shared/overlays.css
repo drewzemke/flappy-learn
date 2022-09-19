@@ -2,12 +2,13 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  background-color: var(--overlay-bg-color);
-  transition: 0.2s;
   top: 0;
   left: 0;
   display: flex;
   justify-content: center;
+  transition: 0.2s;
+  background-color: var(--overlay-bg-color);
+  color: var(--overlay-text-color);
 }
 
 .overlay-item {
@@ -28,14 +29,29 @@
   opacity: 20%;
 }
 
-.overlay-text {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
+.no-shade {
+  background-color: rgba(0, 0, 0, 0);
 }
 
-.overlay-text span {
+.overlay span {
   font-weight: 500;
   color: yellow;
+}
+
+.overlay-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay-message p {
+  text-align: center;
+  padding: 1rem;
+}
+
+.overlay-score {
+  margin: 5px;
+  margin-left: auto;
+  align-self: flex-start;
 }

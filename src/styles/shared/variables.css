@@ -3,13 +3,15 @@
   --main-hue: 200;
   --background-color: hsl(var(--main-hue), 10%, 10%);
   --main-color: hsl(var(--main-hue), 80%, 70%);
-  --overlay-bg-color: hsla(0, 0%, 0%, 65%);
+  --overlay-bg-color: hsla(0, 0%, 0%, 80%);
   --overlay-item-bg-color: hsla(0, 0%, 0%, 60%);
 
   /* replace these with actually colors from the palette!! */
   --text-color-light: lightgrey;
   --text-color-dark: black;
   --highlight-color: goldenrod;
+  --overlay-text-color: white;
+  --overlay-score-color: black;
   --border-color: hsl(0, 0%, 50%);
 
   /* layout sizes */
