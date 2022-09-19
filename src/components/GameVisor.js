@@ -1,8 +1,7 @@
 import { Html } from '@react-three/drei';
 import { RunState } from '../game-model/RunState';
-import '../styles/visorStyles.css';
 
-export function GameVisor({
+export function RENAMEMEPLEASEGameVisor({
   round,
   score,
   lastRoundScore,

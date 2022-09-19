@@ -6,7 +6,7 @@ import {
   sigmoid,
 } from './mathServices';
 
-export class GeneticNeuralNetwork {
+export default class GeneticNeuralNetwork {
   // The 'signature' is an array that specifies the number of neurons in each layer of the NN.
   //  - signature[0] is the size of the input layer
   //  - signature[signature.length-1] is the size of the output layer

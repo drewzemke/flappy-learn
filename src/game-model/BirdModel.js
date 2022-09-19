@@ -1,4 +1,4 @@
-export class BirdModel {
+export default class BirdModel {
   constructor(x, y, velY, jumpVel) {
     this._x = x;
     this._y = y;
@@ -16,7 +16,7 @@ export class BirdModel {
     } else {
       // If the bird is dead, move it to the left (at the same speed as the pipes)
       // until it's offscreen
-      if (this._x >= -gameSettings.screenWidth) {
+      if (this._x >= -gameSettings.gameWidth) {
         this._x -= gameSettings.pipeSpeed * delta;
       }
     }

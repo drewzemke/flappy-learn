@@ -3,7 +3,7 @@ export function testRoomCollisions(birdPos, gameSettings) {
   // First, check if we've hit the top or bottom
   if (
     Math.abs(birdPos.y) + gameSettings.birdRadius >
-    gameSettings.screenHeight / 2 + gameSettings.collisionTolerance
+    gameSettings.gameHeight / 2 + gameSettings.collisionTolerance
   ) {
     return 'died by hitting the top or bottom of the screen';
   }

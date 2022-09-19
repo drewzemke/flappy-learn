@@ -1,0 +1,41 @@
+.overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: var(--overlay-bg-color);
+  transition: 0.2s;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.overlay-item {
+  padding: 10px;
+  background-color: var(--overlay-item-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+@media (max-width: 550px) {
+  .overlay-item {
+    padding: 7px;
+  }
+}
+
+.low-opacity {
+  transition: 0.2s;
+  opacity: 20%;
+}
+
+.overlay-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.overlay-text span {
+  font-weight: 500;
+  color: yellow;
+}

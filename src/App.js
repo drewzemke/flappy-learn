@@ -1,29 +1,62 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Link, NavLink } from 'react-router-dom';
 import GameContainer from './components/GameContainer';
 import MainMenu from './components/menus/MainMenu';
 import SettingsMenu from './components/menus/SettingsMenu';
-import styled from 'styled-components';
 
-// NEED TO BRING THESE IN FROM SOMEWHERE ELSE...
-const SCREEN_WIDTH = 8;
-const SCREEN_HEIGHT = 4.5;
-
-const AppContainer = styled.div`
-  width: ${100 * SCREEN_WIDTH}px;
-  height: ${100 * SCREEN_HEIGHT}px;
-  background: var(--background-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  border: 1px solid lightgray;
-  border-radius: 10px;
-  overflow: hidden;
-`;
+// Randomly-chosen subtitles, a la Minecraft. Why not.
+const subtitles = [
+  'A cute little machine learning experiment!',
+  `It's like Flappy Bird but with a nerdy twist!`,
+  `"Watch 'em learn" instead of "watch and learn"!`,
+];
 
 export default function App() {
   return (
-    <AppContainer>
+    <div className='app-container'>
+      <div className='header'>
+        <div className='header-title'>
+          <h1>
+            <Link to={'/'}>Learnin' Birds</Link>
+          </h1>
+          <div className='header-subtitle'>
+            {subtitles[Math.floor(Math.random() * subtitles.length)]}
+          </div>
+        </div>
+        <nav className='header-nav'>
+          <ul>
+            <li>
+              <NavLink
+                to={'/'}
+                className={({ isActive }) =>
+                  'header-link' + (isActive ? ' active' : '')
+                }
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={'/settings'}
+                className={({ isActive }) =>
+                  'header-link' + (isActive ? ' active' : '')
+                }
+              >
+                Settings
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={'/about'}
+                className={({ isActive }) =>
+                  'header-link' + (isActive ? ' active' : '')
+                }
+              >
+                About
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+      </div>
       <Routes>
         <Route
           path='/'
@@ -43,6 +76,7 @@ export default function App() {
           element={<SettingsMenu />}
         />
       </Routes>
-    </AppContainer>
+      <div className='footer'>&copy; 2022 Drew Zemke</div>
+    </div>
   );
 }

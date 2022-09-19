@@ -2,7 +2,12 @@ import React, { useMemo } from 'react';
 import { TextureLoader, NearestFilter } from 'three';
 import { useLoader } from '@react-three/fiber';
 
-export function Bird({ position, vertVelocity, isAlive, gameSettings }) {
+export default function Bird({
+  position,
+  vertVelocity = 0,
+  isAlive = true,
+  gameSettings,
+}) {
   // Load the spritesheet for the bird.
   const birdTexture = useLoader(
     TextureLoader,

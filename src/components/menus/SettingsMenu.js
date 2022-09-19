@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useStore } from '../../state/stateManagement';
-import { Canvas } from '@react-three/fiber';
-import { Bird } from '../game-elements/Bird';
-import { Pipe } from '../game-elements/Pipe';
-import { PipeModel } from '../../game-model/PipeModel';
+import CanvasContainer from '../ui-elements/CanvasContainer';
+import CanvasOverlay from '../ui-elements/overlays/CanvasOverlay';
+import DrewSlider from '../ui-elements/DrewSlider';
+import SettingsSampleScreen from './SettingsSampleScreen';
 
 // An array to store the names of the available settings
 // and the parameters used to set them.
@@ -34,134 +34,94 @@ const availableSettings = [
   {
     settingKey: 'pipeWidth',
     name: 'Pipe Width',
-    min: 0,
-    max: 5,
+    min: 0.5,
+    max: 2,
   },
   {
     settingKey: 'pipeGapSize',
-    name: 'Pipe Spacing (Vertical)',
+    name: 'Pipe Spacing (Vert.)',
     min: 0,
-    max: 5,
+    max: 4,
   },
   {
     settingKey: 'pipeSpacing',
-    name: 'Pipe Spacing (Horizontal)',
-    min: 0,
+    name: 'Pipe Spacing (Horiz.)',
+    min: 1,
     max: 5,
   },
 ];
 
 export default function SettingsMenu() {
+  // Keeps track of whether a value is being altered (by dragging a slider)
+  const [dragging, setDragging] = useState(false);
+
   const { gameSettings, setGameSettings } = useStore(state => ({
     gameSettings: state.gameSettings,
     setGameSettings: state.setGameSettings,
   }));
 
-  const onSettingsChange = event => {
-    //
-    // This will need to be changed once I weave in the sliders!
-    //
+  const onSettingsChange = (settingKey, newValue) => {
     // Update the setting that was modified.
     const newGameSettings = {
-      [event.target.name]: event.target.value,
       ...gameSettings,
+      [settingKey]: newValue,
     };
+
     setGameSettings(newGameSettings);
+    setDragging(true);
+  };
+
+  const onFinish = () => {
+    setDragging(false);
   };
 
   return (
     <>
-      <div className='settings-menu-header'>Settings</div>
-      <div className='settings-list'>
-        {availableSettings.map(settingInfo => (
-          <Setting
-            key={settingInfo.settingKey}
-            value={gameSettings[settingInfo.settingKey]}
-            onChange={onSettingsChange}
-            {...settingInfo}
-          />
-        ))}
-      </div>
-      <SettingsSampleScreen gameSettings={gameSettings} />
-      <div className='back-button'>
-        <Link to='../'>Back</Link>
-      </div>
+      <CanvasContainer>
+        <SettingsSampleScreen
+          gameSettings={gameSettings}
+          lowOpacity={dragging}
+        />
+        <CanvasOverlay lowOpacity={dragging}>
+          <div className={'settings-list'}>
+            {availableSettings.map(settingInfo => (
+              <Setting
+                key={settingInfo.settingKey}
+                value={gameSettings[settingInfo.settingKey]}
+                onChange={onSettingsChange}
+                onFinish={onFinish}
+                {...settingInfo}
+              />
+            ))}
+          </div>
+        </CanvasOverlay>
+      </CanvasContainer>
     </>
   );
 }
 
-function Setting({ value, settingKey, name, min, max, onChange }) {
+function Setting({ value, settingKey, name, min, max, onChange, onFinish }) {
+  const round = (val, places = 0) =>
+    Math.round(10 ** places * val) / 10 ** places;
+
   return (
-    <div className='setting'>
-      <div className='setting-name'>{name}</div>
-      <input
-        type='number'
-        className='setting-input'
-        name={settingKey}
+    <div className='setting overlay-item'>
+      <div className='setting-text'>
+        {name}:&nbsp;<span className='setting-value'>{round(value, 1)}</span>
+      </div>
+      <DrewSlider
         value={value}
-        onChange={onChange}
+        min={min}
+        max={max}
+        onChange={newVal => onChange(settingKey, newVal)}
+        onFinish={onFinish}
+        trackHeight={8}
+        trackWidth={180}
+        thumbWidth={15}
+        thumbHeight={15}
+        thumbColor={'var(--highlight-color)'}
+        thumbStyle={{ borderRadius: '3px' }}
       />
-    </div>
-  );
-}
-
-function SettingsSampleScreen({ gameSettings }) {
-  const { screenWidth, screenHeight } = gameSettings;
-
-  // Make some pipes using the settings.
-  const numPipes = Math.ceil(screenWidth / gameSettings.pipeSpacing);
-  const initialX = -screenWidth / 4;
-  const pipes = [];
-  for (let i = 0; i < numPipes; i++) {
-    pipes.push(
-      new PipeModel(
-        initialX + i * gameSettings.pipeSpacing,
-        gameSettings.pipeMaxAbsY
-      )
-    );
-  }
-
-  return (
-    <div
-      className='settings-sample-screen'
-      style={{ width: '400px', height: '225px' }}
-    >
-      <Canvas
-        orthographic
-        camera={{
-          zoom: 50,
-          position: [0, 0, 1],
-          top: screenHeight / 2,
-          bottom: -screenHeight / 2,
-          left: -screenWidth / 2,
-          right: screenWidth / 2,
-        }}
-      >
-        <color
-          attach={'background'}
-          args={[0, 0, 0]}
-        />
-        <Bird
-          position={{ x: gameSettings.birdX, y: gameSettings.birdInitialY }}
-          isAlive={true}
-          gameSettings={gameSettings}
-        />
-        {pipes.map((pipe, index) => (
-          <Pipe
-            key={index}
-            position={pipe.position}
-            gameSettings={gameSettings}
-          />
-        ))}
-        <mesh position={[0, 0, -0.1]}>
-          <planeGeometry args={[screenWidth, screenHeight, 1, 1]} />
-          <meshBasicMaterial
-            // wireframe
-            color={'skyblue'}
-          />
-        </mesh>
-        )
-      </Canvas>
     </div>
   );
 }

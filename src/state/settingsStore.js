@@ -1,8 +1,8 @@
-export const settingsSlice = (get, set) => ({
+export const settingsSlice = (set, get) => ({
   gameSettings: {
-    // Screen constants -- maybe these need to be external since they're super constant?
-    screenHeight: 4.5,
-    screenWidth: 8,
+    // These are the width and height of the game screen IN THREEJS UNITS
+    gameWidth: 8,
+    gameHeight: 4.5,
     // Bird physics
     gravity: 10,
     birdRadius: 0.25,
@@ -25,10 +25,11 @@ export const settingsSlice = (get, set) => ({
     scoreMethod: 'pipes',
   },
 
-  setGameSettings: newGameSettings =>
+  setGameSettings: newGameSettings => {
     set({
       gameSettings: newGameSettings,
-    }),
+    });
+  },
 
   simulationSettings: {
     // Number of birds in each generation (should be even)

@@ -1,0 +1,33 @@
+/* .settings-sample-screen {
+} */
+
+.settings-list {
+  align-self: flex-start;
+  padding: 5%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+/* for small screen widths */
+/* switches to centering everything vertically (via align-items and height)
+   and removes the padding on the left and right */
+@media (max-width: 550px) {
+  .settings-list {
+    height: 100%;
+    align-items: center;
+    padding: 5% 0%;
+  }
+}
+
+.setting-text {
+  font-size: smaller;
+  margin-bottom: 10px;
+}
+
+.setting-value {
+  font-weight: 500;
+  color: var(--highlight-color);
+}

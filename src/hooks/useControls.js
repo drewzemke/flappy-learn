@@ -3,7 +3,7 @@ import { initFlappyNeuralNetwork } from '../ai/FlappyNN';
 
 // Conditionally sets up a controls scheme using either player input (spacebar) or
 // a neural network
-export function useControls(isPlayerHuman, handleKeyDown) {
+export default function useControls(isPlayerHuman, handleKeyDown) {
   useEffect(() => {
     // Set up a key listener for spacebar (for the human player)
     // and escape (in both cases)

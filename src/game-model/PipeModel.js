@@ -1,4 +1,4 @@
-export class PipeModel {
+export default class PipeModel {
   constructor(x, maxAbsY) {
     this._x = x;
     // Storing this so that we can use it when resetting this pipe's position
@@ -12,6 +12,11 @@ export class PipeModel {
 
   get position() {
     return { x: this._x, y: this._y };
+  }
+
+  set position({ x, y }) {
+    this._x = x;
+    this._y = y;
   }
 
   tick(delta, gameSettings) {

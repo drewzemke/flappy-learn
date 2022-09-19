@@ -1,0 +1,81 @@
+.header {
+  width: 90%;
+  display: flex;
+  /* max space between title and menu items */
+  justify-content: space-between;
+  /* vertical alignment */
+  align-items: center;
+  flex-wrap: wrap;
+  /* the two children specifiy their own margin-bottom so that they
+  can have space between them when they wrap */
+  margin: 1.5rem 1rem 0 1rem;
+}
+
+/* Extra space to force wrapping earlier */
+.header-title {
+  margin-right: 2rem;
+}
+
+@media (max-width: 550px) {
+  .header {
+    justify-content: center;
+  }
+
+  .header-title {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.header-subtitle {
+  font-style: italic;
+  font-size: smaller;
+}
+
+/* space between the title and nav after wrapping */
+.header-title,
+.header-nav {
+  margin-bottom: 1rem;
+}
+
+.header-title > h1 > a {
+  text-decoration: none;
+  font-size: larger;
+  color: var(--main-color);
+}
+
+/* side-by-side list elements */
+.header-nav ul {
+  display: flex;
+}
+
+/* space out list elements, remove bullets */
+.header-nav li {
+  padding: 0 0.5rem;
+  list-style: none;
+}
+
+.header-link {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.25rem 1rem;
+  transition: 0.2s;
+  text-decoration: none;
+  color: var(--text-color-light);
+}
+
+.header-link:hover,
+.active {
+  color: var(--text-color-dark);
+  background-color: var(--main-color);
+  transition: 0.2s;
+}
+
+/* I know this is called 'header.css' but I don't want to find another
+   place to put the footer stuff */
+.footer {
+  margin: 1rem 0 1.5rem 0;
+  font-size: x-small;
+}

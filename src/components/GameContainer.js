@@ -1,14 +1,15 @@
 import GameEngine from '../components/GameEngine';
-import { Canvas } from '@react-three/fiber';
-import { Stats } from '@react-three/drei';
+import { GameState } from '../state/gameStore';
 import { useStore } from '../state/stateManagement';
 import { useEffect } from 'react';
-
-const SCALE = 100;
+import GameCanvas from './ui-elements/GameCanvas';
+import CanvasContainer from './ui-elements/CanvasContainer';
+import PlayerIntroOverlay from './ui-elements/overlays/PlayerIntroOverlay';
 
 export default function GameContainer({ isPlayerHuman }) {
-  const { screenHeight, screenWidth } = useStore(state => state.gameSettings);
+  const { gameHeight, gameWidth } = useStore(state => state.gameSettings);
   const { pauseGame } = useStore(state => state.actions);
+  const gameState = useStore(state => state.gameState);
 
   useEffect(() => {
     window.addEventListener('blur', pauseGame);
@@ -17,26 +18,16 @@ export default function GameContainer({ isPlayerHuman }) {
   }, []);
 
   return (
-    <div
-      style={{
-        width: `${screenWidth * SCALE}px`,
-        height: `${screenHeight * SCALE}px`,
-      }}
-    >
-      <Canvas
-        orthographic
-        camera={{
-          zoom: SCALE,
-          position: [0, 0, 1],
-          top: screenHeight / 2,
-          bottom: -screenHeight / 2,
-          left: -screenWidth / 2,
-          right: screenWidth / 2,
-        }}
+    <CanvasContainer>
+      <GameCanvas
+        gameWidth={gameWidth}
+        gameHeight={gameHeight}
       >
         <GameEngine isPlayerHuman={isPlayerHuman} />
-        <Stats />
-      </Canvas>
-    </div>
+      </GameCanvas>
+      {gameState === GameState.PLAYER_INTRO_SCREEN ? (
+        <PlayerIntroOverlay></PlayerIntroOverlay>
+      ) : null}
+    </CanvasContainer>
   );
 }

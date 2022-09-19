@@ -1,16 +1,27 @@
 import { addEffect } from '@react-three/fiber';
-import { GeneticNeuralNetwork } from '../ai/GeneticNeuralNet';
-import { BirdModel } from '../game-model/BirdModel';
-import { PipeModel } from '../game-model/PipeModel';
+import GeneticNeuralNetwork from '../ai/GeneticNeuralNet';
+import BirdModel from '../game-model/BirdModel';
+import PipeModel from '../game-model/PipeModel';
 import {
   testRoomCollisions,
   testPipeCollisions,
 } from '../game-model/collisionTesting';
-import { RunState } from '../game-model/RunState';
+
+export const GameState = {
+  NO_GAME: -1,
+  PLAYER_INTRO_SCREEN: 0.0,
+  PLAYER_PLAYING: 0.1,
+  PLAYER_PAUSED: 0.2,
+  PLAYER_DEAD: 0.3,
+  AI_SETTINGS: 1.0,
+  AI_PLAYING: 1.1,
+  AI_PAUSED: 1.2,
+  AI_DEAD: 1.3,
+};
 
 export const gameSlice = (set, get) => ({
   initialized: false,
-  runState: RunState.WAITING_TO_START,
+  gameState: GameState.NO_GAME,
   round: 0,
   score: 0,
   lastRoundScore: 0, // Replace this with a array of (average?) score histories
@@ -46,7 +57,6 @@ export const gameSlice = (set, get) => ({
 
         set({
           initialized: true,
-          neuralNets: isPlayerHuman ? [] : neuralNets,
           round: 0,
           score: 0,
           lastRoundScore: 0,
@@ -54,6 +64,10 @@ export const gameSlice = (set, get) => ({
           birds: [],
           pipes: [],
           activePipeIndex: 0,
+          neuralNets: isPlayerHuman ? [] : neuralNets,
+          gameState: isPlayerHuman
+            ? GameState.PLAYER_INTRO_SCREEN
+            : GameState.AI_SETTINGS,
         });
 
         // Use addEffect to do frame-by-frame computations
@@ -69,12 +83,17 @@ export const gameSlice = (set, get) => ({
         set({ addEffectUnsub: unsub });
 
         // Prepare the first round
-        get().actions.prepNextRound();
+        get().actions.prepNextRound(true);
       }
     },
 
     // This is called before the start of every round.
-    prepNextRound: () => {
+    prepNextRound: (isFirstRound = false) => {
+      // (if this isn't the first round??), update the last round's score
+      set(state => ({
+        lastRoundScore: state.score,
+      }));
+
       const { simulationSettings, gameSettings, neuralNets } = get();
 
       // Make some new birds
@@ -94,7 +113,7 @@ export const gameSlice = (set, get) => ({
 
       // Make pipes. First, how many pipes do we need?
       const numPipes =
-        Math.ceil(gameSettings.screenWidth / gameSettings.pipeSpacing) + 1;
+        Math.ceil(gameSettings.gameWidth / gameSettings.pipeSpacing) + 1;
       // Make that many pipes
       const pipes = [];
       for (let i = 0; i < numPipes; i++) {
@@ -102,7 +121,8 @@ export const gameSlice = (set, get) => ({
         pipes.push(new PipeModel(pipeX, gameSettings.pipeMaxAbsY));
       }
 
-      set({
+      // Add that stuff to the state
+      set(state => ({
         // reset the score
         score: 0,
         // send in the birds
@@ -111,46 +131,58 @@ export const gameSlice = (set, get) => ({
         pipes: pipes,
         // set the first 'active pipe' to be the first one
         activePipeIndex: 0,
-      });
-    },
-
-    // This could probably be combined with 'prepNextRound'...
-    prepareToRestart: () => {
-      // console.log('Restarting game!');
-      set(state => ({
-        lastRoundScore: state.score,
-      }));
-      get().actions.prepNextRound();
-      set(state => ({
-        runState: RunState.RESTARTING,
+        // advance the round counter:
         round: state.round + 1,
-        neuralNets: GeneticNeuralNetwork.makeNewGeneration(
-          state.neuralNets,
-          state.simulationSettings
-        ),
       }));
+
+      // If this isn't the first round, we also need to
+      if (!isFirstRound) {
+        set(state => ({
+          neuralNets: GeneticNeuralNetwork.makeNewGeneration(
+            state.neuralNets,
+            state.simulationSettings
+          ),
+        }));
+      }
     },
 
-    // Starts the next round
+    // Starts the game (from intro screen, paused, or whatever)
     start: () => {
-      const { runState } = get();
+      const { gameState } = get();
 
-      if (runState === RunState.WAITING_TO_START) {
-        // console.log('Starting game!');
-        set({ round: 1 });
-        set({ lastRenderTime: Date.now(), runState: RunState.RUNNING });
+      if (
+        [
+          GameState.PLAYER_INTRO_SCREEN,
+          GameState.PLAYER_PAUSED,
+          GameState.PLAYER_DEAD,
+        ].includes(gameState)
+      ) {
+        set({ gameState: GameState.PLAYER_PLAYING });
       }
 
-      if (runState === RunState.RESTARTING || runState === RunState.PAUSED) {
-        set({ lastRenderTime: Date.now(), runState: RunState.RUNNING });
+      if (
+        [
+          GameState.AI_SETTINGS,
+          GameState.AI_PAUSED,
+          GameState.AI_DEAD,
+        ].includes(gameState)
+      ) {
+        set({ gameState: GameState.AI_PLAYING });
       }
+
+      // Also update the last rendered time since we're about to start
+      // rendering stuff again
+      set({ lastRenderTime: Date.now() });
     },
 
     // Pauses the game mid-run
     pauseGame: () => {
-      if (get().runState === RunState.RUNNING) {
-        // console.log('Pausing game');
-        set({ runState: RunState.PAUSED });
+      // console.log('Pausing game');
+      if (get().gameState === GameState.PLAYER_PLAYING) {
+        set({ gameState: GameState.PLAYER_PAUSED });
+      }
+      if (get().gameState === GameState.AI_PLAYING) {
+        set({ gameState: GameState.AI_PAUSED });
       }
     },
 
@@ -170,15 +202,28 @@ export const gameSlice = (set, get) => ({
       if (neuralNets[birdIndex]) neuralNets[birdIndex].fitness = score;
 
       // Check if all of the birds are dead.
+      //
+      // TODO: set a brief (0.5s?) timer to do this instead?
+      //
       if (birds.every(bird => !bird.isAlive)) {
-        set({ runState: RunState.DEAD });
+        if (get().gameState === GameState.PLAYER_PLAYING) {
+          set({ gameState: GameState.PLAYER_DEAD });
+        }
+        if (get().gameState === GameState.AI_PLAYING) {
+          set({ gameState: GameState.AI_DEAD });
+        }
       }
     },
 
     // Called every frame
     frameLoop: () => {
       // Don't do shit unless the game is running
-      if (get().runState !== RunState.RUNNING) return;
+      if (
+        ![GameState.PLAYER_PLAYING, GameState.AI_PLAYING].includes(
+          get().gameState
+        )
+      )
+        return;
 
       const { gameSettings, lastRenderTime } = get();
 
@@ -214,7 +259,7 @@ export const gameSlice = (set, get) => ({
         activePipeIndex > 0 ? activePipeIndex - 1 : pipes.length - 1;
       if (
         pipes[previousPipeIndex].position.x <
-        -gameSettings.screenWidth / 2 - gameSettings.pipeWidth / 2
+        -gameSettings.gameWidth / 2 - gameSettings.pipeWidth / 2
       ) {
         pipes[previousPipeIndex].resetPosition(
           pipes.length * gameSettings.pipeSpacing
@@ -257,7 +302,8 @@ export const gameSlice = (set, get) => ({
     // Use this to reset shit between game sessions.
     // (Like, everything should reset when we go back to the menu)
     unInit: () => {
-      set({ initialized: false, runState: RunState.WAITING_TO_START });
+      console.log('uninit');
+      set({ initialized: false, gameState: GameState.NO_GAME });
     },
   },
 });

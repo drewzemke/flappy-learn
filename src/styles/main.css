@@ -1,0 +1,50 @@
+@import './shared/variables.css';
+@import './shared/overlays.css';
+@import './shared/header.css';
+@import './shared/mainmenu.css';
+@import './shared/settings.css';
+/* delete this VVV eventually? */
+@import './shared/visors.css';
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
+:root {
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  font-size: large;
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color-light);
+}
+
+.app-container {
+  min-width: calc(var(--app-min-width) * 1px);
+  max-width: calc(var(--app-max-width) * 1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.canvas-container {
+  position: relative;
+  margin: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+}

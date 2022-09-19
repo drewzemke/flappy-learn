@@ -2,7 +2,7 @@ import { useLoader } from '@react-three/fiber';
 import { useMemo } from 'react';
 import { NearestFilter, TextureLoader } from 'three';
 
-export function Pipe({ position, gameSettings }) {
+export default function Pipe({ position, gameSettings }) {
   const pipeTexture = useLoader(TextureLoader, '/textures/pipe-texture.png');
   pipeTexture.minFilter = NearestFilter;
   pipeTexture.magFilter = NearestFilter;
@@ -13,7 +13,7 @@ export function Pipe({ position, gameSettings }) {
   const repeatValue =
     pipeTexture.image.width /
     pipeTexture.image.height /
-    (gameSettings.pipeWidth / gameSettings.screenHeight);
+    (gameSettings.pipeWidth / gameSettings.gameHeight);
   pipeTexture.repeat.set(1, repeatValue);
   pipeTexture.offset.set(0, 1 - repeatValue);
 
@@ -21,56 +21,55 @@ export function Pipe({ position, gameSettings }) {
   // pipeTexture.repeat.set(0.5, 1);
   const upsideDownPipeTexture = useMemo(() => {
     const texture = pipeTexture.clone();
-    texture.needsUpdate = true;
     texture.repeat.set(1, -repeatValue);
     texture.offset.set(0, 1);
+    texture.needsUpdate = true;
     return texture;
-    // eslint-disable-next-line
-  }, [pipeTexture]);
+  }, [pipeTexture, repeatValue]);
 
   return (
     <group position={[position.x, position.y, 0]}>
       <sprite
         position={[
           0,
-          -gameSettings.screenHeight / 2 - gameSettings.pipeGapSize / 2,
+          -gameSettings.gameHeight / 2 - gameSettings.pipeGapSize / 2,
           0,
         ]}
-        scale={[gameSettings.pipeWidth, gameSettings.screenHeight]}
+        scale={[gameSettings.pipeWidth, gameSettings.gameHeight]}
       >
         <spriteMaterial map={pipeTexture} />
       </sprite>
       <sprite
         position={[
           0,
-          gameSettings.screenHeight / 2 + gameSettings.pipeGapSize / 2,
+          gameSettings.gameHeight / 2 + gameSettings.pipeGapSize / 2,
           0,
         ]}
-        scale={[gameSettings.pipeWidth, gameSettings.screenHeight]}
+        scale={[gameSettings.pipeWidth, gameSettings.gameHeight]}
       >
         <spriteMaterial map={upsideDownPipeTexture} />
       </sprite>
       {/* <mesh
         position={[
           0,
-          -gameSettings.screenHeight / 2 - gameSettings.pipeGapSize / 2,
+          -gameSettings.gameHeight / 2 - gameSettings.pipeGapSize / 2,
           0,
         ]}
       >
         <planeGeometry
-          args={[gameSettings.pipeWidth, gameSettings.screenHeight, 1, 1]}
+          args={[gameSettings.pipeWidth, gameSettings.gameHeight, 1, 1]}
         />
         <meshBasicMaterial color={'green'} />
       </mesh>
       <mesh
         position={[
           0,
-          gameSettings.screenHeight / 2 + gameSettings.pipeGapSize / 2,
+          gameSettings.gameHeight / 2 + gameSettings.pipeGapSize / 2,
           0,
         ]}
       >
         <planeGeometry
-          args={[gameSettings.pipeWidth, gameSettings.screenHeight, 1, 1]}
+          args={[gameSettings.pipeWidth, gameSettings.gameHeight, 1, 1]}
         />
         <meshBasicMaterial color={'green'} />
       </mesh> */}

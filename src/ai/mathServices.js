@@ -47,3 +47,11 @@ export function sampleWeightedList(weights, maxQuota) {
   console.log(`Selecting parent ${index}`);
   return index;
 }
+
+// I just need a clamp function and I don't want to define it everywhere, okay?
+// Just a utility function. This probably exists in a library somewhere...
+export const clamp = (val, min, max) => {
+  if (val < min) return min;
+  if (val > max) return max;
+  return val;
+};

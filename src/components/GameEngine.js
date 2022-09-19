@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import { Bird } from './game-elements/Bird';
-import { Pipe } from './game-elements/Pipe';
+import React, { useEffect, useRef } from 'react';
+import Bird from './game-elements/Bird';
+import Pipe from './game-elements/Pipe';
 import { useStore } from '../state/stateManagement';
-import { GameVisor } from './GameVisor';
-import { RunState } from '../game-model/RunState';
-import { useControls } from '../hooks/controlHooks';
+import { GameState } from '../state/gameStore';
+import useControls from '../hooks/useControls';
 
 export default function GameEngine({ isPlayerHuman }) {
   const {
@@ -12,18 +11,12 @@ export default function GameEngine({ isPlayerHuman }) {
     score,
     lastRoundScore,
     round,
-    runState,
     birds,
     pipes,
     initialized,
     gameSettings,
+    gameState,
   } = useStore(); // update to include a selector???
-
-  // Automatically resets the game after a second -- REMOVE EVENTUALLY!
-  if (runState === RunState.DEAD) {
-    actions.prepareToRestart();
-    setTimeout(actions.start, 1000);
-  }
 
   // Initialize the model
   useEffect(() => {
@@ -32,13 +25,33 @@ export default function GameEngine({ isPlayerHuman }) {
     // eslint-disable-next-line
   }, []);
 
+  // I guess I need to use a ref for this, since the handleKeyDown
+  // callback won't refer to the current state when it's run... dunno why
+  const gameStateRef = useRef();
+  gameStateRef.current = gameState;
+
   // This function deals with these key presses:
   // - Enter: start the game or simulation
   // - Esc: pause menu
   // - Spacebar: jump (if player controls)
-  function handleKeyDown(event) {
-    if (event.code === 'Enter' && runState === RunState.WAITING_TO_START) {
-      actions.start();
+  const handleKeyDown = event => {
+    event.preventDefault();
+    if (event.code === 'Enter') {
+      if (
+        [GameState.PLAYER_INTRO_SCREEN, GameState.AI_SETTINGS].includes(
+          gameStateRef.current
+        )
+      ) {
+        actions.prepNextRound();
+        actions.start();
+      }
+      if (
+        [GameState.PLAYER_DEAD, GameState.AI_DEAD].includes(
+          gameStateRef.current
+        )
+      ) {
+        actions.start();
+      }
     }
     if (event.code === 'Escape') {
       // Do something here eventually
@@ -46,19 +59,12 @@ export default function GameEngine({ isPlayerHuman }) {
     if (isPlayerHuman && event.code === 'Space') {
       actions.jump(0);
     }
-  }
+  };
   useControls(isPlayerHuman, handleKeyDown);
 
   // NO REFS?!?! Thanks Zustand!
   return (
     <>
-      <GameVisor
-        round={round}
-        score={score}
-        lastRoundScore={lastRoundScore}
-        runState={runState}
-        numAlive={birds.filter(bird => bird.isAlive).length}
-      />
       {initialized ? (
         <>
           {birds.map((bird, index) => (
@@ -79,23 +85,6 @@ export default function GameEngine({ isPlayerHuman }) {
           ))}
         </>
       ) : null}
-      <BackgroundPanel />
     </>
-  );
-}
-
-function BackgroundPanel() {
-  const gameSettings = useStore(state => state.gameSettings);
-
-  return (
-    <mesh position={[0, 0, -0.1]}>
-      <planeGeometry
-        args={[gameSettings.screenWidth, gameSettings.screenHeight, 1, 1]}
-      />
-      <meshBasicMaterial
-        // wireframe
-        color={'skyblue'}
-      />
-    </mesh>
   );
 }
