@@ -1,5 +1,5 @@
 import { Route, Routes, Link, NavLink } from 'react-router-dom';
-import GameContainer from './components/GameContainer';
+import GameController from './components/GameController';
 import MainMenu from './components/menus/MainMenu';
 import SettingsMenu from './components/menus/SettingsMenu';
 
@@ -64,11 +64,11 @@ export default function App() {
         />
         <Route
           path='/humangame'
-          element={<GameContainer isPlayerHuman={true} />}
+          element={<GameController isPlayerHuman={true} />}
         />
         <Route
           path='/aigame'
-          element={<GameContainer isPlayerHuman={false} />}
+          element={<GameController isPlayerHuman={false} />}
         />
 
         <Route
