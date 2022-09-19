@@ -3,7 +3,10 @@ import { useMemo } from 'react';
 import { NearestFilter, TextureLoader } from 'three';
 
 export default function Pipe({ position, gameSettings }) {
-  const pipeTexture = useLoader(TextureLoader, '/textures/pipe-texture.png');
+  const pipeTexture = useLoader(
+    TextureLoader,
+    'assets/textures/pipe-texture.png'
+  );
   pipeTexture.minFilter = NearestFilter;
   pipeTexture.magFilter = NearestFilter;
 

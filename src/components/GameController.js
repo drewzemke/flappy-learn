@@ -58,6 +58,12 @@ export default function GameController({ isPlayerHuman }) {
     pipes: state.pipes,
   }));
 
+  // A callback for the overlay pause button
+  const handlePauseButton = event => {
+    event.preventDefault();
+    actions.pauseGame();
+  };
+
   return (
     <CanvasContainer containerRef={containerRef}>
       <GameCanvas
@@ -70,11 +76,20 @@ export default function GameController({ isPlayerHuman }) {
           gameSettings={gameSettings}
         />
       </GameCanvas>
-      {isPlayerHuman ? <PlayerScoreOverlay score={score} /> : null}
+
+      {isPlayerHuman ? (
+        <PlayerScoreOverlay
+          handlePauseButton={handlePauseButton}
+          score={score}
+        />
+      ) : null}
+
       {gameState === GameState.PLAYER_INTRO_SCREEN ? (
         <PlayerIntroOverlay />
       ) : null}
+
       {gameState === GameState.PLAYER_PAUSED ? <PlayerPausedOverlay /> : null}
+
       {gameState === GameState.PLAYER_DEAD ? (
         <PlayerDeadOverlay score={score} />
       ) : null}

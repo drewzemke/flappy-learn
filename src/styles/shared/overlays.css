@@ -51,7 +51,21 @@
 }
 
 .overlay-score {
+  align-self: flex-start;
   margin: 5px;
   margin-left: auto;
+}
+
+.overlay-button {
   align-self: flex-start;
+  margin: 5px;
+  padding: 0;
+  display: flex;
+  cursor: pointer;
+}
+
+.overlay svg {
+  width: 36px;
+  height: 36px;
+  fill: white;
 }

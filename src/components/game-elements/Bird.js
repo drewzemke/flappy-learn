@@ -11,7 +11,7 @@ export default function Bird({
   // Load the spritesheet for the bird.
   const birdTexture = useLoader(
     TextureLoader,
-    '/textures/bird-spritesheet.png'
+    'assets/textures/bird-spritesheet.png'
   );
   birdTexture.minFilter = NearestFilter;
   birdTexture.magFilter = NearestFilter;
