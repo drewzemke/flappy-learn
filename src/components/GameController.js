@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import GameDisplay from './GameDisplay';
-import { useStore } from '../state/stateManagement';
-import { GameState } from '../state/gameStore';
+import { useStore } from '../game-logic/state/stateManagement';
+import { GameState } from '../game-logic/state/gameStore';
 import GameCanvas from './ui-elements/GameCanvas';
 import CanvasContainer from './ui-elements/CanvasContainer';
 import {
@@ -34,9 +34,9 @@ export default function GameController({ isPlayerHuman }) {
   const gameState = useStore(state => state.gameState);
 
   // We need to pass information to the overlay screens as necessary
-  const { score, lastRoundScore, round, numAlive } = useStore(state => ({
+  const { score, scoreHistory, round, numAlive } = useStore(state => ({
     score: state.score,
-    lastRoundScore: state.lastRoundScore,
+    scoreHistory: state.scoreHistory,
     round: state.round,
     numAlive: state.neuralNets.length,
   }));
@@ -91,7 +91,7 @@ export default function GameController({ isPlayerHuman }) {
       {gameState === GameState.PLAYER_PAUSED ? <PlayerPausedOverlay /> : null}
 
       {gameState === GameState.PLAYER_DEAD ? (
-        <PlayerDeadOverlay score={score} />
+        <PlayerDeadOverlay scoreHistory={scoreHistory} />
       ) : null}
     </CanvasContainer>
   );

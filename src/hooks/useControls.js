@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { initFlappyNeuralNetwork } from '../ai/FlappyNN';
-import { GameState } from '../state/gameStore';
+import { initFlappyNeuralNetwork } from '../game-logic/ai/FlappyNN';
+import { GameState } from '../game-logic/state/gameStore';
 
 // Conditionally sets up a controls scheme using either player input (spacebar) or
 // a neural network

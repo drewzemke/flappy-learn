@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import MainMenuSampleScreen from './MainMenuSampleScreen';
-import { useStore } from '../../state/stateManagement';
+import { useStore } from '../../game-logic/state/stateManagement';
 import CanvasOverlay from '../ui-elements/overlays/CanvasOverlay';
 import CanvasContainer from '../ui-elements/CanvasContainer';
 

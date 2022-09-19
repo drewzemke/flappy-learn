@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useStore } from '../../state/stateManagement';
+import { useStore } from '../../game-logic/state/stateManagement';
 import CanvasContainer from '../ui-elements/CanvasContainer';
 import CanvasOverlay from '../ui-elements/overlays/CanvasOverlay';
 import DrewSlider from '../ui-elements/DrewSlider';

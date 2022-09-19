@@ -1,11 +1,8 @@
 import { addEffect } from '@react-three/fiber';
 import GeneticNeuralNetwork from '../ai/GeneticNeuralNet';
-import BirdModel from '../game-model/BirdModel';
-import PipeModel from '../game-model/PipeModel';
-import {
-  testRoomCollisions,
-  testPipeCollisions,
-} from '../game-model/collisionTesting';
+import BirdModel from '../BirdModel';
+import PipeModel from '../PipeModel';
+import { testRoomCollisions, testPipeCollisions } from '../collisionTesting';
 
 export const GameState = {
   NO_GAME: -1,
@@ -24,7 +21,7 @@ export const gameSlice = (set, get) => ({
   gameState: GameState.NO_GAME,
   round: 0,
   score: 0,
-  lastRoundScore: 0, // Replace this with a array of (average?) score histories
+  scoreHistory: [],
   lastRenderTime: Date.now(),
   birds: [],
   pipes: [],
@@ -59,7 +56,7 @@ export const gameSlice = (set, get) => ({
           initialized: true,
           round: 0,
           score: 0,
-          lastRoundScore: 0,
+          scoreHistory: [],
           lastRenderTime: Date.now(),
           birds: [],
           pipes: [],
@@ -89,11 +86,6 @@ export const gameSlice = (set, get) => ({
 
     // This is called before the start of every round.
     prepNextRound: (isFirstRound = false) => {
-      // (if this isn't the first round??), update the last round's score
-      set(state => ({
-        lastRoundScore: state.score,
-      }));
-
       const { simulationSettings, gameSettings, neuralNets } = get();
 
       // Make some new birds
@@ -200,6 +192,29 @@ export const gameSlice = (set, get) => ({
 
       // Update the fitness of the corresponding NN.
       if (neuralNets[birdIndex]) neuralNets[birdIndex].fitness = score;
+
+      // If this was the last bird to die, compute the average score and
+      // add it to the score history
+      if (birds.every(bird => !bird.isAlive)) {
+        if (neuralNets.length) {
+          // Add up the neural nets' score
+          const total = neuralNets.reduce(
+            (prev, curr) => prev + curr.fitness,
+            0
+          );
+          const avg = total / neuralNets.length;
+          set(state => ({
+            scoreHistory: [...state.scoreHistory, avg],
+          }));
+        } else {
+          // If there are no NNs, the player must be controlling,
+          // so record the current score in the score history
+          set(state => ({
+            scoreHistory: [...state.scoreHistory, score],
+          }));
+        }
+        console.log(get().scoreHistory);
+      }
     },
 
     // Called every frame
@@ -254,7 +269,7 @@ export const gameSlice = (set, get) => ({
       }
       // 2) Check if the active pipe has scrolled past where it could collide with the
       //    bird, and advance the active pipe index if so.
-      //    Also increase the score, since we passed a pipe :)
+      //    Also, if there are any birds alive, increase the score, since we passed a pipe :)
       if (
         pipes[activePipeIndex].position.x <
         gameSettings.birdX - gameSettings.birdRadius
@@ -262,7 +277,10 @@ export const gameSlice = (set, get) => ({
         set({
           activePipeIndex: (activePipeIndex + 1) % pipes.length,
         });
-        if (gameSettings.scoreMethod === 'pipes') {
+        if (
+          gameSettings.scoreMethod === 'pipes' &&
+          birds.some(bird => bird.isAlive)
+        ) {
           set(state => ({
             score: state.score + 1,
           }));

@@ -3,7 +3,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { NoToneMapping } from 'three';
 import styled from 'styled-components';
 import { LayoutConstants } from '../../styles/shared/layoutConstants';
-import { clamp } from '../../ai/mathServices';
+import { clamp } from '../../game-logic/ai/mathServices';
 
 const GameCanvasDiv = styled.div`
   width: ${props => props.canvasWidth}px;

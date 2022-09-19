@@ -33,14 +33,17 @@ export function PlayerPausedOverlay() {
   );
 }
 
-export function PlayerDeadOverlay({ score }) {
+export function PlayerDeadOverlay({ scoreHistory }) {
+  const score = scoreHistory[scoreHistory.length - 1];
+  const bestScore = Math.max(...scoreHistory);
+
   return (
     <CanvasOverlay>
       <div className='overlay-message'>
         <p>You died.</p>
         <p>
           Your score was <span>{score}</span>. Your best score this session is{' '}
-          <span>{0}</span>.
+          <span>{bestScore}</span>.
         </p>
         <p>
           <span>Click</span>, <span>tap</span>, or press <span>space</span> to

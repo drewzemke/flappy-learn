@@ -1,6 +1,6 @@
 import Bird from '../game-elements/Bird';
 import Pipe from '../game-elements/Pipe';
-import PipeModel from '../../game-model/PipeModel';
+import PipeModel from '../../game-logic/PipeModel';
 import GameCanvas from '../ui-elements/GameCanvas';
 
 export default function SettingsSampleScreen({ gameSettings }) {
