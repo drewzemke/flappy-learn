@@ -48,6 +48,13 @@ export function sampleWeightedList(weights, maxQuota) {
   return index;
 }
 
+// Rounds a decimal to a given number of places
+export const round = (val, places = 0) =>
+  Math.round(10 ** places * val) / 10 ** places;
+
+// Rounds x to the nearest multiple of y
+export const roundToNearestMult = (x, y) => y * Math.round(x / y);
+
 // I just need a clamp function and I don't want to define it everywhere, okay?
 // Just a utility function. This probably exists in a library somewhere...
 export const clamp = (val, min, max) => {
@@ -55,3 +62,11 @@ export const clamp = (val, min, max) => {
   if (val > max) return max;
   return val;
 };
+
+// Same with these guys
+export const lerp = (min, max, val) => (max - min) * val + min;
+
+export const invLerp = (val, min, max) => (val - min) / (max - min);
+
+export const remap = (val, inMin, inMax, outMin, outMax) =>
+  lerp(outMin, outMax, invLerp(val, inMin, inMax));

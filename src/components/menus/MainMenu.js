@@ -11,7 +11,7 @@ export default function MainMenu() {
   return (
     <CanvasContainer>
       <MainMenuSampleScreen gameSettings={gameSettings} />
-      <CanvasOverlay>
+      <CanvasOverlay clickable>
         <div className='main-menu-items'>
           <Link
             className='overlay-item main-menu-link'

@@ -1,7 +1,7 @@
 import { Route, Routes, Link, NavLink } from 'react-router-dom';
 import GameController from './components/GameController';
 import MainMenu from './components/menus/MainMenu';
-import SettingsMenu from './components/menus/SettingsMenu';
+import GameSettingsMenu from './components/menus/GameSettingsMenu';
 
 // Randomly-chosen subtitles, a la Minecraft. Why not.
 const subtitles = [
@@ -44,7 +44,7 @@ export default function App() {
                 Settings
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to={'/about'}
                 className={({ isActive }) =>
@@ -53,7 +53,7 @@ export default function App() {
               >
                 About
               </NavLink>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </div>
@@ -73,7 +73,7 @@ export default function App() {
 
         <Route
           path='/settings'
-          element={<SettingsMenu />}
+          element={<GameSettingsMenu />}
         />
       </Routes>
       <div className='footer'>&copy; 2022 Drew Zemke</div>

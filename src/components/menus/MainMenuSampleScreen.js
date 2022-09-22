@@ -1,3 +1,4 @@
+import BackgroundPanel from '../threejs-elements/BackgroundPanel';
 import GameCanvas from '../ui-elements/GameCanvas';
 
 export default function MainMenuSampleScreen({ gameSettings, children }) {
@@ -6,10 +7,15 @@ export default function MainMenuSampleScreen({ gameSettings, children }) {
   return (
     <div className='main-menu-sample-screen'>
       <GameCanvas
-        gameHeight={gameHeight}
         gameWidth={gameWidth}
+        gameHeight={gameHeight}
       >
         {children}
+        <BackgroundPanel
+          animated
+          gameWidth={gameWidth}
+          gameHeight={gameHeight}
+        />
       </GameCanvas>
     </div>
   );

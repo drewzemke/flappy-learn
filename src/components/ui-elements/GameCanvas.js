@@ -3,7 +3,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { NoToneMapping } from 'three';
 import styled from 'styled-components';
 import { LayoutConstants } from '../../styles/shared/layoutConstants';
-import { clamp } from '../../game-logic/ai/mathServices';
+import { clamp } from '../../utils/mathServices';
 
 const GameCanvasDiv = styled.div`
   width: ${props => props.canvasWidth}px;
@@ -11,7 +11,12 @@ const GameCanvasDiv = styled.div`
   background: var(--main-color);
 `;
 
-export default function GameCanvas({ gameHeight, gameWidth, children }) {
+export default function GameCanvas({
+  gameHeight,
+  gameWidth,
+  gameCanvasRef,
+  children,
+}) {
   // Dynamic Canvas plan
   // 1. go to state -> settings and rename 'gameWidth' and 'gameHeight' to
   //    'gamewidth' and 'gameheight' -- DONE
@@ -39,6 +44,7 @@ export default function GameCanvas({ gameHeight, gameWidth, children }) {
     <GameCanvasDiv
       canvasWidth={canvasWidth}
       canvasHeight={canvasHeight}
+      ref={gameCanvasRef}
     >
       <Canvas
         gl={{ antialias: true, toneMapping: NoToneMapping }}

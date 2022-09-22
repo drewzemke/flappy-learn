@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useStore } from '../../game-logic/state/stateManagement';
 import CanvasContainer from '../ui-elements/CanvasContainer';
 import CanvasOverlay from '../ui-elements/overlays/CanvasOverlay';
-import DrewSlider from '../ui-elements/DrewSlider';
-import SettingsSampleScreen from './SettingsSampleScreen';
+import Setting from './Setting';
+import GameSettingsSampleScreen from './GameSettingsSampleScreen';
 
 // An array to store the names of the available settings
 // and the parameters used to set them.
@@ -17,19 +17,19 @@ const availableSettings = [
     settingKey: 'pipeSpeed',
     name: 'Horizontal Speed',
     min: 1,
-    max: 5,
+    max: 7,
   },
   {
     settingKey: 'birdJumpVel',
-    name: 'Jump Height',
+    name: 'Jump Velocity',
     min: 0,
-    max: 5,
+    max: 20,
   },
   {
     settingKey: 'gravity',
     name: 'Gravity',
     min: 0,
-    max: 20,
+    max: 30,
   },
   {
     settingKey: 'pipeWidth',
@@ -51,7 +51,7 @@ const availableSettings = [
   },
 ];
 
-export default function SettingsMenu() {
+export default function GameSettingsMenu() {
   // Keeps track of whether a value is being altered (by dragging a slider)
   const [dragging, setDragging] = useState(false);
 
@@ -78,11 +78,14 @@ export default function SettingsMenu() {
   return (
     <>
       <CanvasContainer>
-        <SettingsSampleScreen
+        <GameSettingsSampleScreen
           gameSettings={gameSettings}
           lowOpacity={dragging}
         />
-        <CanvasOverlay lowOpacity={dragging}>
+        <CanvasOverlay
+          clickable
+          lowOpacity={dragging}
+        >
           <div className={'settings-list'}>
             {availableSettings.map(settingInfo => (
               <Setting
@@ -97,31 +100,5 @@ export default function SettingsMenu() {
         </CanvasOverlay>
       </CanvasContainer>
     </>
-  );
-}
-
-function Setting({ value, settingKey, name, min, max, onChange, onFinish }) {
-  const round = (val, places = 0) =>
-    Math.round(10 ** places * val) / 10 ** places;
-
-  return (
-    <div className='setting overlay-item'>
-      <div className='setting-text'>
-        {name}:&nbsp;<span className='setting-value'>{round(value, 1)}</span>
-      </div>
-      <DrewSlider
-        value={value}
-        min={min}
-        max={max}
-        onChange={newVal => onChange(settingKey, newVal)}
-        onFinish={onFinish}
-        trackHeight={8}
-        trackWidth={180}
-        thumbWidth={15}
-        thumbHeight={15}
-        thumbColor={'var(--highlight-color)'}
-        thumbStyle={{ borderRadius: '3px' }}
-      />
-    </div>
   );
 }

@@ -33,6 +33,10 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
+.no-click {
+  pointer-events: none;
+}
+
 .overlay span {
   font-weight: 500;
   color: yellow;
@@ -61,6 +65,7 @@
   margin: 5px;
   padding: 0;
   display: flex;
+  pointer-events: visible;
   cursor: pointer;
 }
 

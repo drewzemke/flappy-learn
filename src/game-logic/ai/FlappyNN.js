@@ -1,23 +1,27 @@
+import { GameState } from '../state/gameStore';
 import { useStore } from '../state/stateManagement';
 
 export function initFlappyNeuralNetwork() {
   return useStore.subscribe(
-    ({ birds, pipes, activePipeIndex, neuralNets, score, actions }) => {
-      // Iterate over the birds
-      birds.forEach((bird, index) => {
-        // We don't do shit for dead birds.
-        if (!bird.isAlive) {
-          return;
-        }
+    ({ birds, pipes, activePipeIndex, neuralNets, gameState, actions }) => {
+      // No need to do anything if the game isn't running
+      if (gameState === GameState.AI_PLAYING) {
+        // Iterate over the birds
+        birds.forEach((bird, index) => {
+          // We don't do shit for dead birds.
+          if (!bird.isAlive) {
+            return;
+          }
 
-        // Otherwise, gather input for this bird and compute the
-        // output using the NN.
-        const input = getNNPackage(bird, pipes, activePipeIndex);
-        const [output] = neuralNets[index].compute(input);
-        // console.log(output);
-        // If the output was bigger than 1/2, jump!
-        if (output > 0.5) actions.jump(index);
-      });
+          // Otherwise, gather input for this bird and compute the
+          // output using the NN.
+          const input = getNNPackage(bird, pipes, activePipeIndex);
+          const [output] = neuralNets[index].compute(input);
+          // console.log(output);
+          // If the output was bigger than 1/2, jump!
+          if (output > 0.5) actions.jump(index);
+        });
+      }
     }
   );
 }

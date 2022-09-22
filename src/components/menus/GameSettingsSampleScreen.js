@@ -1,9 +1,10 @@
-import Bird from '../game-elements/Bird';
-import Pipe from '../game-elements/Pipe';
+import Bird from '../threejs-elements/Bird';
+import Pipe from '../threejs-elements/Pipe';
 import PipeModel from '../../game-logic/PipeModel';
 import GameCanvas from '../ui-elements/GameCanvas';
+import BackgroundPanel from '../threejs-elements/BackgroundPanel';
 
-export default function SettingsSampleScreen({ gameSettings }) {
+export default function GameSettingsSampleScreen({ gameSettings }) {
   const { gameWidth, gameHeight } = gameSettings;
 
   const numPipes = Math.ceil(gameWidth / gameSettings.pipeSpacing);
@@ -24,6 +25,10 @@ export default function SettingsSampleScreen({ gameSettings }) {
       gameHeight={gameHeight}
       gameWidth={gameWidth}
     >
+      <BackgroundPanel
+        gameWidth={gameWidth}
+        gameHeight={gameHeight}
+      />
       <Bird
         position={{ x: gameSettings.birdX, y: gameSettings.birdInitialY }}
         gameSettings={gameSettings}

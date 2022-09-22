@@ -33,23 +33,9 @@ export const gameSlice = (set, get) => ({
     // This is called once to set everything up the first time
     init: isPlayerHuman => {
       if (!get().initialized) {
-        const { simulationSettings } = get();
         // Initialize the neural nets if needed
-        let neuralNets;
         if (!isPlayerHuman) {
-          neuralNets = Array.from(
-            { length: simulationSettings.numBirds },
-            () => {
-              const neuralNet = new GeneticNeuralNetwork(
-                simulationSettings.neuralNetSignature
-              );
-              neuralNet.initRandom(
-                simulationSettings.neuralNetInitialMean,
-                simulationSettings.neuralNetStandardDev
-              );
-              return neuralNet;
-            }
-          );
+          get().actions.initNeuralNets();
         }
 
         set({
@@ -61,7 +47,7 @@ export const gameSlice = (set, get) => ({
           birds: [],
           pipes: [],
           activePipeIndex: 0,
-          neuralNets: isPlayerHuman ? [] : neuralNets,
+
           gameState: isPlayerHuman
             ? GameState.PLAYER_INTRO_SCREEN
             : GameState.AI_SETTINGS,
@@ -84,8 +70,31 @@ export const gameSlice = (set, get) => ({
       }
     },
 
-    // This is called before the start of every round.
-    prepNextRound: (isFirstRound = false) => {
+    // This is called whenever we need to (reinitialize) the neural nets
+    initNeuralNets: () => {
+      const { simulationSettings } = get();
+
+      const neuralNets = Array.from(
+        { length: simulationSettings.numBirds },
+        () => {
+          const neuralNet = new GeneticNeuralNetwork(
+            simulationSettings.neuralNetSignature
+          );
+          neuralNet.initRandom(
+            simulationSettings.neuralNetInitialMean,
+            simulationSettings.neuralNetStandardDev
+          );
+          return neuralNet;
+        }
+      );
+
+      set({ neuralNets: neuralNets });
+
+      // Make a new set of birds
+      get().actions.initBirds();
+    },
+
+    initBirds: () => {
       const { simulationSettings, gameSettings, neuralNets } = get();
 
       // Make some new birds
@@ -98,10 +107,21 @@ export const gameSlice = (set, get) => ({
           new BirdModel(
             gameSettings.birdX,
             gameSettings.birdInitialY,
-            gameSettings.birdInitialVel,
+            // Setting the initial velocity to be equal to the jump vel
+            gameSettings.birdJumpVel,
             gameSettings.birdJumpVel
           )
       );
+      // send in the birds
+      set({ birds: birds });
+    },
+
+    // This is called before the start of every round.
+    prepNextRound: (isFirstRound = false) => {
+      const { gameSettings } = get();
+
+      // Make some new birds
+      get().actions.initBirds();
 
       // Make pipes. First, how many pipes do we need?
       const numPipes =
@@ -117,8 +137,6 @@ export const gameSlice = (set, get) => ({
       set(state => ({
         // reset the score
         score: 0,
-        // send in the birds
-        birds: birds,
         // pass in the array of pipes we just made
         pipes: pipes,
         // set the first 'active pipe' to be the first one
@@ -127,7 +145,8 @@ export const gameSlice = (set, get) => ({
         round: state.round + 1,
       }));
 
-      // If this isn't the first round, we also need to
+      // If this isn't the first round, we also need to make a new generation
+      // of neural nets
       if (!isFirstRound) {
         set(state => ({
           neuralNets: GeneticNeuralNetwork.makeNewGeneration(
@@ -213,7 +232,6 @@ export const gameSlice = (set, get) => ({
             scoreHistory: [...state.scoreHistory, score],
           }));
         }
-        console.log(get().scoreHistory);
       }
     },
 

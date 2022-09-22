@@ -9,8 +9,16 @@ import {
   PlayerIntroOverlay,
   PlayerPausedOverlay,
 } from './ui-elements/overlays/PlayerOverlays';
-import { PlayerScoreOverlay } from './ui-elements/overlays/ScoreOverlays';
+import {
+  AIScoreOverlay,
+  PlayerScoreOverlay,
+} from './ui-elements/overlays/ScoreOverlays';
 import useControls from '../hooks/useControls';
+import AISettingsMenu from './menus/AISettingsMenu';
+import {
+  AIDeadOverlay,
+  AIPausedOverlay,
+} from './ui-elements/overlays/AIOverlays';
 
 // This is the main component for interacting with the game state.
 // It captures player control and passes it to the state, displays
@@ -41,16 +49,11 @@ export default function GameController({ isPlayerHuman }) {
     numAlive: state.neuralNets.length,
   }));
 
-  // We need to make a ref to the CanvasContainer div to pass into
+  // We need to make a ref to the GameCanvas internal div to pass into
   // the game engine (for click handling purposes)
-  const containerRef = useRef();
+  const gameCanvasRef = useRef();
 
-  // And we need a ref to the gamestate to pass to the event handlers...
-  // For some reason passing just the gamestate doesn't work
-  const gameStateRef = useRef();
-  gameStateRef.current = gameState;
-
-  useControls(actions, isPlayerHuman, gameStateRef, containerRef);
+  useControls(actions, isPlayerHuman, gameState, gameCanvasRef);
 
   // Get the information we need to pass to the GameDisplay
   const { birds, pipes } = useStore(state => ({
@@ -64,16 +67,28 @@ export default function GameController({ isPlayerHuman }) {
     actions.pauseGame();
   };
 
+  const handleButton = event => {
+    event.preventDefault();
+    if ((event.target.value = 'aiStart')) {
+      actions.start();
+    }
+  };
+
   return (
-    <CanvasContainer containerRef={containerRef}>
+    <CanvasContainer>
       <GameCanvas
         gameWidth={gameWidth}
         gameHeight={gameHeight}
+        gameCanvasRef={gameCanvasRef}
       >
         <GameDisplay
           birds={birds}
           pipes={pipes}
           gameSettings={gameSettings}
+          isRunning={
+            gameState === GameState.PLAYER_PLAYING ||
+            gameState === GameState.AI_PLAYING
+          }
         />
       </GameCanvas>
 
@@ -82,7 +97,12 @@ export default function GameController({ isPlayerHuman }) {
           handlePauseButton={handlePauseButton}
           score={score}
         />
-      ) : null}
+      ) : (
+        <AIScoreOverlay
+          handlePauseButton={handlePauseButton}
+          score={score}
+        />
+      )}
 
       {gameState === GameState.PLAYER_INTRO_SCREEN ? (
         <PlayerIntroOverlay />
@@ -92,6 +112,16 @@ export default function GameController({ isPlayerHuman }) {
 
       {gameState === GameState.PLAYER_DEAD ? (
         <PlayerDeadOverlay scoreHistory={scoreHistory} />
+      ) : null}
+
+      {gameState === GameState.AI_SETTINGS ? (
+        <AISettingsMenu handleButton={handleButton} />
+      ) : null}
+
+      {gameState === GameState.AI_PAUSED ? <AIPausedOverlay /> : null}
+
+      {gameState === GameState.AI_DEAD ? (
+        <AIDeadOverlay scoreHistory={scoreHistory} />
       ) : null}
     </CanvasContainer>
   );

@@ -4,19 +4,18 @@ export const settingsSlice = (set, get) => ({
     gameWidth: 8,
     gameHeight: 4.5,
     // Bird physics
-    gravity: 10,
+    gravity: 15,
     birdRadius: 0.25,
     birdX: -3,
-    birdInitialY: 0,
-    birdInitialVel: 4,
-    birdJumpVel: 3,
+    birdInitialY: -0.5,
+    birdJumpVel: 5,
     // Pipe physics
     pipeWidth: 0.75,
-    pipeGapSize: 1.7,
-    pipeSpeed: 2,
-    pipeSpacing: 3,
-    pipeInitialX: 0,
-    pipeMaxAbsY: 1.3,
+    pipeGapSize: 1.5,
+    pipeSpeed: 1.5,
+    pipeSpacing: 2.5,
+    pipeInitialX: 1.5,
+    pipeMaxAbsY: 1,
     // Collisions
     collisionTolerance: 0.03,
     // Scoring method options:
@@ -48,14 +47,18 @@ export const settingsSlice = (set, get) => ({
     // - 'pairs' -- pair off the top 50% and have each pair produce 4 children
     // - 'weighted' -- randomly select pairs to made with weights based on fitness
     reproductionMethod: 'pairs',
+    childrenPerPair: 4,
     // This is a number p between 0 and 1 that determines the cutoff for randomly selecting
     // neural nets to reproduce based on fitness. If p < 1, only the neural nets representing the
     // top 100p% of the total fitness in a generation will be chosen from.
     weightedMaxQuota: 0.1,
   },
 
-  setSimSettings: newSimSettings =>
+  setSimSettings: newSimSettings => {
     set({
       simulationSettings: newSimSettings,
-    }),
+    });
+    // We need to reinitialize the neural nets (because their settings may have changed)
+    get().actions.initNeuralNets();
+  },
 });

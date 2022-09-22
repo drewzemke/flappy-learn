@@ -28,6 +28,8 @@ body {
   height: 100vh;
   background-color: var(--background-color);
   color: var(--text-color-light);
+  /* not sure about this, but it helps with mobile size issues */
+  touch-action: pan-y;
 }
 
 .app-container {

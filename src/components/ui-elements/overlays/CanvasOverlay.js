@@ -1,6 +1,7 @@
 export default function CanvasOverlay({
   lowOpacity = false,
   noShade = false,
+  clickable = false,
   children,
 }) {
   return (
@@ -8,7 +9,8 @@ export default function CanvasOverlay({
       className={
         'overlay' +
         (lowOpacity ? ' low-opacity' : '') +
-        (noShade ? ' no-shade' : '')
+        (noShade ? ' no-shade' : '') +
+        (clickable ? '' : ' no-click')
       }
     >
       {children}

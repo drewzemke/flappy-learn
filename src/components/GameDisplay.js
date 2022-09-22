@@ -1,9 +1,15 @@
-import Bird from './game-elements/Bird';
-import Pipe from './game-elements/Pipe';
+import BackgroundPanel from './threejs-elements/BackgroundPanel';
+import Bird from './threejs-elements/Bird';
+import Pipe from './threejs-elements/Pipe';
 
-export default function GameDisplay({ birds, pipes, gameSettings }) {
+export default function GameDisplay({ birds, pipes, gameSettings, isRunning }) {
   return (
     <>
+      <BackgroundPanel
+        animated={isRunning}
+        gameWidth={gameSettings.gameWidth}
+        gameHeight={gameSettings.gameHeight}
+      />
       {birds.map((bird, index) => (
         <Bird
           key={index}

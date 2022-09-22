@@ -4,7 +4,7 @@ import {
   normalRandom,
   sampleWeightedList,
   sigmoid,
-} from './mathServices';
+} from '../../utils/mathServices';
 
 export default class GeneticNeuralNetwork {
   // The 'signature' is an array that specifies the number of neurons in each layer of the NN.

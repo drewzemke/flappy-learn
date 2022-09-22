@@ -7,7 +7,7 @@ import { GameState } from '../game-logic/state/gameStore';
 export default function useControls(
   actions,
   isPlayerHuman,
-  gameStateRef,
+  gameState,
   containerRef
 ) {
   // Deals with various possible key presses or pointer clicks/taps
@@ -26,16 +26,12 @@ export default function useControls(
           GameState.AI_SETTINGS,
           GameState.PLAYER_PAUSED,
           GameState.AI_PAUSED,
-        ].includes(gameStateRef.current)
+        ].includes(gameState)
       ) {
         actions.start();
         return;
       }
-      if (
-        [GameState.PLAYER_DEAD, GameState.AI_DEAD].includes(
-          gameStateRef.current
-        )
-      ) {
+      if ([GameState.PLAYER_DEAD, GameState.AI_DEAD].includes(gameState)) {
         actions.prepNextRound();
         actions.start();
         return;
@@ -88,5 +84,5 @@ export default function useControls(
       if (unsubCallback) unsubCallback();
     };
     // eslint-disable-next-line
-  }, []);
+  }, [gameState]);
 }

@@ -44,6 +44,7 @@ const StyleThumb = styled.div`
   top: -${props => (props.thumbHeight - props.trackHeight) / 2}px;
   background: ${props => props.thumbColor};
   cursor: pointer;
+  touch-action: none;
 
   &:hover {
     ${props => props.thumbHoverStyle}
@@ -116,11 +117,12 @@ const DrewSlider = ({
 
   // Called whenever the mouse moves after clicking on the thumb.
   // Computes the new value and sends it to the callback.
-  const handleMouseMove = event => {
+  const handleDrag = event => {
+    event.preventDefault();
+    event.stopPropagation();
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
     let newX =
-      event.clientX -
-      diff.current -
-      sliderRef.current.getBoundingClientRect().left;
+      clientX - diff.current - sliderRef.current.getBoundingClientRect().left;
     const end = sliderRef.current.offsetWidth;
     const start = 0;
 
@@ -133,22 +135,26 @@ const DrewSlider = ({
   // When the user clicks the thumb, record the displacement of the click relative to the
   // thumb's bounding box. Then setup listeners to keep track of when the user
   // moves and lets go of the thumb.
-  const handlePointerDown = event => {
-    event.preventDefault();
+  const handleStart = event => {
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
     diff.current =
-      event.clientX -
+      clientX -
       thumbRef.current.getBoundingClientRect().left -
       (thumbWidth || thumbDiam) / 2;
-    document.addEventListener('pointermove', handleMouseMove);
-    document.addEventListener('pointerup', handleMouseUp);
+    if (!event.touches) {
+      document.addEventListener('mousemove', handleDrag);
+      document.addEventListener('mouseup', handleEnd);
+    }
   };
 
   // When the user lets go of the thumb, remove those listeners
   // and notify any subscribes that the slider is done sliding.
-  const handleMouseUp = event => {
-    document.removeEventListener('pointermove', handleMouseMove);
-    document.removeEventListener('pointerup', handleMouseUp);
+  const handleEnd = event => {
     if (onFinish) onFinish(valueRef.current);
+    if (!event.touches) {
+      document.removeEventListener('mousemove', handleDrag);
+      document.removeEventListener('mouseup', handleEnd);
+    }
   };
 
   return (
@@ -157,6 +163,9 @@ const DrewSlider = ({
         ref={sliderRef}
         trackWidth={trackWidth}
         trackHeight={trackHeight}
+        onMouseUp={handleEnd}
+        onTouchStart={handleStart}
+        onTouchEnd={handleEnd}
       >
         <StyledTrack
           trackColor={trackColor}
@@ -188,7 +197,9 @@ const DrewSlider = ({
             ...thumbStyle,
           }}
           ref={thumbRef}
-          onPointerDown={handlePointerDown}
+          onMouseDown={handleStart}
+          onTouchMove={handleDrag}
+          onTouchEnd={handleEnd}
         />
       </StyledSlider>
     </>
