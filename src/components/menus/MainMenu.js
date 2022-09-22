@@ -14,13 +14,13 @@ export default function MainMenu() {
       <CanvasOverlay clickable>
         <div className='main-menu-items'>
           <Link
-            className='overlay-item main-menu-link'
+            className='overlay-item overlay-button'
             to='/humangame'
           >
             I want to play!
           </Link>
           <Link
-            className='overlay-item main-menu-link'
+            className='overlay-item overlay-button'
             to='/aigame'
           >
             I want to watch the AI learn!

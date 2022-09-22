@@ -26,7 +26,11 @@ import {
 // to the GameDisplay component to show the pipe, bird, etc positions.
 export default function GameController({ isPlayerHuman }) {
   // We need the height and width to properly adjust the canvas size
-  const gameSettings = useStore(state => state.gameSettings);
+  const { gameSettings, simSettings, setSimSettings } = useStore(state => ({
+    gameSettings: state.gameSettings,
+    simSettings: state.simulationSettings,
+    setSimSettings: state.setSimSettings,
+  }));
   const { gameWidth, gameHeight } = gameSettings;
 
   const actions = useStore(state => state.actions);
@@ -46,7 +50,7 @@ export default function GameController({ isPlayerHuman }) {
     score: state.score,
     scoreHistory: state.scoreHistory,
     round: state.round,
-    numAlive: state.neuralNets.length,
+    numAlive: state.birds.filter(bird => bird.isAlive).length,
   }));
 
   // We need to make a ref to the GameCanvas internal div to pass into
@@ -67,11 +71,23 @@ export default function GameController({ isPlayerHuman }) {
     actions.pauseGame();
   };
 
-  const handleButton = event => {
-    event.preventDefault();
-    if ((event.target.value = 'aiStart')) {
-      actions.start();
-    }
+  const handleStart = event => {
+    event?.preventDefault();
+    actions.start();
+  };
+
+  const handleRestart = event => {
+    event?.preventDefault();
+    actions.prepNextRound();
+    actions.start();
+  };
+
+  const handleCheckbox = event => {
+    const newSimSettings = {
+      ...simSettings,
+      autoAdvance: !simSettings.autoAdvance,
+    };
+    setSimSettings(newSimSettings);
   };
 
   return (
@@ -101,27 +117,42 @@ export default function GameController({ isPlayerHuman }) {
         <AIScoreOverlay
           handlePauseButton={handlePauseButton}
           score={score}
+          round={round}
+          numAlive={numAlive}
+          numBirds={birds.length}
         />
       )}
 
       {gameState === GameState.PLAYER_INTRO_SCREEN ? (
-        <PlayerIntroOverlay />
+        <PlayerIntroOverlay handleButton={handleStart} />
       ) : null}
 
-      {gameState === GameState.PLAYER_PAUSED ? <PlayerPausedOverlay /> : null}
+      {gameState === GameState.PLAYER_PAUSED ? (
+        <PlayerPausedOverlay handleButton={handleStart} />
+      ) : null}
 
       {gameState === GameState.PLAYER_DEAD ? (
-        <PlayerDeadOverlay scoreHistory={scoreHistory} />
+        <PlayerDeadOverlay
+          handleButton={handleRestart}
+          scoreHistory={scoreHistory}
+        />
       ) : null}
 
       {gameState === GameState.AI_SETTINGS ? (
-        <AISettingsMenu handleButton={handleButton} />
+        <AISettingsMenu handleButton={handleStart} />
       ) : null}
 
-      {gameState === GameState.AI_PAUSED ? <AIPausedOverlay /> : null}
+      {gameState === GameState.AI_PAUSED ? (
+        <AIPausedOverlay handleButton={handleStart} />
+      ) : null}
 
       {gameState === GameState.AI_DEAD ? (
-        <AIDeadOverlay scoreHistory={scoreHistory} />
+        <AIDeadOverlay
+          handleButton={handleRestart}
+          handleCheckbox={handleCheckbox}
+          autoAdvance={simSettings.autoAdvance}
+          scoreHistory={scoreHistory}
+        />
       ) : null}
     </CanvasContainer>
   );

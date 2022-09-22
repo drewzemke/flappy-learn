@@ -36,6 +36,8 @@ export const gameSlice = (set, get) => ({
         // Initialize the neural nets if needed
         if (!isPlayerHuman) {
           get().actions.initNeuralNets();
+        } else {
+          set({ neuralNets: [] });
         }
 
         set({

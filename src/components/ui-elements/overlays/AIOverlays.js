@@ -1,37 +1,66 @@
 import CanvasOverlay from './CanvasOverlay';
 import { round } from '../../../utils/mathServices';
+import { useEffect } from 'react';
 
-export function AIPausedOverlay() {
+export function AIPausedOverlay({ handleButton }) {
   return (
-    <CanvasOverlay>
+    <CanvasOverlay clickable>
       <div className='overlay-message'>
         <p>Simulation paused.</p>
 
-        <p>
-          <span>Click</span>, <span>tap</span>, or press <span>space</span> to
-          resume.
-        </p>
+        <button
+          value='start'
+          onClick={handleButton}
+          className='overlay-item overlay-button'
+        >
+          Resume
+        </button>
       </div>
     </CanvasOverlay>
   );
 }
 
-export function AIDeadOverlay({ scoreHistory }) {
+export function AIDeadOverlay({
+  handleButton,
+  handleCheckbox,
+  autoAdvance,
+  scoreHistory,
+}) {
   const score = scoreHistory[scoreHistory.length - 1];
   const bestScore = Math.max(...scoreHistory);
 
+  useEffect(() => {
+    // If we're in autoadvance mode, set a timer to trigger the next round
+    if (autoAdvance) {
+      const timerId = setTimeout(
+        () => handleButton(undefined, 'restart'),
+        1000
+      );
+      return () => clearTimeout(timerId);
+    }
+  }, [autoAdvance, handleButton]);
+
   return (
-    <CanvasOverlay>
+    <CanvasOverlay clickable>
       <div className='overlay-message'>
-        <p>Everyone died.</p>
         <p>
-          The average score was <span>{round(score, 3)}</span>. The best average
-          score this session is <span>{round(bestScore, 3)}</span>.
+          Round over. The average score was <span>{round(score, 3)}</span>. The
+          best average score this session is <span>{round(bestScore, 3)}</span>.
         </p>
-        <p>
-          <span>Click</span>, <span>tap</span>, or press <span>space</span> to
-          start the next round!
-        </p>
+        <button
+          value='restart'
+          onClick={handleButton}
+          className='overlay-item overlay-button'
+        >
+          Start the next round!
+        </button>
+        <div className='overlay-checkbox-message'>
+          <div
+            className={`overlay-checkbox ${autoAdvance ? 'checked' : ''}`}
+            onClick={handleCheckbox}
+          ></div>
+          Automatically advance to the next round after 1 second.
+        </div>
       </div>
     </CanvasOverlay>
   );

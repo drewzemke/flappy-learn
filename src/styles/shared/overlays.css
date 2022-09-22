@@ -50,17 +50,31 @@
 }
 
 .overlay-message p {
+  padding: 0 1rem;
   text-align: center;
-  padding: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .overlay-score {
   align-self: flex-start;
   margin: 5px;
   margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
 }
 
-.overlay-button {
+.overlay-score-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* .overlay-score-values {
+  min-width: 1.75rem;
+} */
+
+.pause-button {
   align-self: flex-start;
   margin: 5px;
   padding: 0;
@@ -73,4 +87,44 @@
   width: 36px;
   height: 36px;
   fill: white;
+}
+
+.overlay-button {
+  /* width: 100%; */
+  font-size: larger;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--overlay-text-color);
+  cursor: pointer;
+}
+
+.overlay-button:hover {
+  color: var(--highlight-color);
+  transition: 0.2s;
+}
+
+.overlay-checkbox-message {
+  font-size: medium;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0rem 2rem;
+}
+
+.overlay-checkbox {
+  box-sizing: border-box;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: 0.75rem;
+  background-color: white;
+  border: 2px solid white;
+  border-radius: 2px;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.overlay-checkbox.checked {
+  background-color: var(--highlight-color);
 }

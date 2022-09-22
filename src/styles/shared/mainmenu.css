@@ -7,17 +7,3 @@
   justify-content: space-evenly;
   align-items: center;
 }
-
-.main-menu-link {
-  width: 100%;
-  font-size: larger;
-  display: flex;
-  justify-content: center;
-  text-decoration: none;
-  color: var(--overlay-text-color);
-}
-
-.main-menu-link:hover {
-  color: var(--highlight-color);
-  transition: 0.2s;
-}

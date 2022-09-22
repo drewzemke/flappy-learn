@@ -12,7 +12,6 @@ export default function useControls(
 ) {
   // Deals with various possible key presses or pointer clicks/taps
   const handleInput = event => {
-    event.preventDefault();
     // Space or click
     // Start the game if the game is in a waiting state, but
     // also check if we need to prep the first round
@@ -20,6 +19,7 @@ export default function useControls(
       (event.type === 'keydown' && event.code === 'Space') ||
       event.type === 'pointerdown'
     ) {
+      event.preventDefault();
       if (
         [
           GameState.PLAYER_INTRO_SCREEN,
@@ -40,6 +40,7 @@ export default function useControls(
     // Escape
     // Open/close the pause menu
     if (event.type === 'keydown' && event.code === 'Escape') {
+      event.preventDefault();
       // Pause the game
       actions.pauseGame();
       return;
@@ -51,6 +52,7 @@ export default function useControls(
       ((event.type === 'keydown' && event.code === 'Space') ||
         event.type === 'pointerdown')
     ) {
+      event.preventDefault();
       actions.jump(0);
       return;
     }

@@ -14,7 +14,7 @@ export const settingsSlice = (set, get) => ({
     pipeGapSize: 1.5,
     pipeSpeed: 1.5,
     pipeSpacing: 2.5,
-    pipeInitialX: 1.5,
+    pipeInitialX: 1,
     pipeMaxAbsY: 1,
     // Collisions
     collisionTolerance: 0.03,
@@ -36,7 +36,7 @@ export const settingsSlice = (set, get) => ({
 
     // Signature for each neural network
     // This has to start with 5 and end with 1, but can have entries in between
-    neuralNetSignature: [5, 1],
+    neuralNetSignature: [5, 3, 1],
 
     // Constants for NN creation and reproduction:
     neuralNetInitialMean: 0,
@@ -52,13 +52,15 @@ export const settingsSlice = (set, get) => ({
     // neural nets to reproduce based on fitness. If p < 1, only the neural nets representing the
     // top 100p% of the total fitness in a generation will be chosen from.
     weightedMaxQuota: 0.1,
+
+    // This automatically moves the simulation to the next round instead of making
+    // the user press the 'next round' button
+    autoAdvance: false,
   },
 
   setSimSettings: newSimSettings => {
     set({
       simulationSettings: newSimSettings,
     });
-    // We need to reinitialize the neural nets (because their settings may have changed)
-    get().actions.initNeuralNets();
   },
 });

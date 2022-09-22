@@ -44,10 +44,10 @@ const availableSettings = [
 ];
 
 export default function AISettingsMenu({ handleButton }) {
-  const { gameSettings, simSettings, setSimSettings } = useStore(state => ({
-    gameSettings: state.gameSettings,
+  const { simSettings, setSimSettings, initNeuralNets } = useStore(state => ({
     simSettings: state.simulationSettings,
     setSimSettings: state.setSimSettings,
+    initNeuralNets: state.actions.initNeuralNets,
   }));
 
   const onSettingsChange = (settingKey, newValue) => {
@@ -91,6 +91,9 @@ export default function AISettingsMenu({ handleButton }) {
     newSimSettings[settingKey] = newValue;
 
     setSimSettings(newSimSettings);
+
+    // We need to reinitialize the neural nets (because their settings have changed)
+    initNeuralNets();
   };
 
   return (
@@ -106,9 +109,9 @@ export default function AISettingsMenu({ handleButton }) {
             />
           ))}
           <button
-            value='aiStart'
+            value='start'
             onClick={handleButton}
-            className='overlay-item main-menu-link'
+            className='overlay-item overlay-button'
           >
             Start!
           </button>
