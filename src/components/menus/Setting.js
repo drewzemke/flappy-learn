@@ -1,5 +1,7 @@
 import DrewSlider from '../ui-elements/DrewSlider';
+import ReactTooltip from 'react-tooltip';
 import { round } from '../../utils/mathServices';
+import { ReactComponent as TooltipSVG } from '../../assets/icons/google-material-question-mark.svg';
 
 export default function Setting({
   value,
@@ -9,11 +11,25 @@ export default function Setting({
   max,
   onChange,
   onFinish,
+  tooltip,
 }) {
   return (
     <div className='setting overlay-item'>
       <div className='setting-text'>
         {name}:&nbsp;<span className='setting-value'>{round(value, 1)}</span>
+        <span
+          className='setting-tooltip'
+          data-tip={tooltip}
+          data-event='click'
+        >
+          <TooltipSVG />
+        </span>
+        <ReactTooltip
+          place='top'
+          type='dark'
+          effect='solid'
+          globalEventOff='click'
+        />
       </div>
       <DrewSlider
         value={value}

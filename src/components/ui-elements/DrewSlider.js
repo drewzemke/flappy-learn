@@ -165,6 +165,7 @@ const DrewSlider = ({
         trackHeight={trackHeight}
         onMouseUp={handleEnd}
         onTouchStart={handleStart}
+        onTouchMove={handleDrag}
         onTouchEnd={handleEnd}
       >
         <StyledTrack
@@ -198,7 +199,6 @@ const DrewSlider = ({
           }}
           ref={thumbRef}
           onMouseDown={handleStart}
-          onTouchMove={handleDrag}
           onTouchEnd={handleEnd}
         />
       </StyledSlider>

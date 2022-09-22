@@ -26,9 +26,22 @@
 .setting-text {
   font-size: smaller;
   margin-bottom: 10px;
+  display: flex;
 }
 
 .setting-value {
   font-weight: 500;
   color: var(--highlight-color);
+}
+
+.setting-tooltip {
+  margin-left: auto;
+}
+
+.setting-tooltip svg {
+  width: 20px;
+  height: 20px;
+  translate: 0px -2px;
+  margin-bottom: -5px;
+  fill: grey;
 }

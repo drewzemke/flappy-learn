@@ -16,6 +16,8 @@ const availableSettings = [
     name: 'Generation Size',
     min: 2,
     max: 1000,
+    tooltip:
+      'The number of birds in each generation. (Must always be a multiple of "Children Per Pair".)',
   },
   // {
   //   settingKey: 'neuralNetStandardDev',
@@ -28,18 +30,23 @@ const availableSettings = [
     name: 'Children Per Pair',
     min: 2,
     max: 100,
+    tooltip:
+      'The number of new birds that will be generated from each pair of birds from the previous generation.',
   },
   {
     settingKey: 'reproductionMutationRate',
     name: 'Mutation Rate',
     min: 0,
     max: 1,
+    tooltip:
+      'The probability that an individual "gene" will be mutated during reproduction.',
   },
   {
     settingKey: 'reproductionMutationStdDev',
     name: 'Mutation Variance',
     min: 0,
     max: 10,
+    tooltip: 'How much a gene can be mutated (if it is selected to mutate).',
   },
 ];
 

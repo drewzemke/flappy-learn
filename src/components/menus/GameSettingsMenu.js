@@ -18,36 +18,43 @@ const availableSettings = [
     name: 'Horizontal Speed',
     min: 1,
     max: 7,
+    tooltip: 'How fast the bird(s) move horizontally.',
   },
   {
     settingKey: 'birdJumpVel',
     name: 'Jump Velocity',
     min: 0,
     max: 20,
+    tooltip:
+      'How quickly a bird moves upwards after jumping. (Almost like jump height, but the actual jump height is affected by gravity.)',
   },
   {
     settingKey: 'gravity',
     name: 'Gravity',
     min: 0,
     max: 30,
+    tooltip: 'How strongly gravity pulls the bird(s) down.',
   },
   {
     settingKey: 'pipeWidth',
     name: 'Pipe Width',
     min: 0.5,
     max: 2,
-  },
-  {
-    settingKey: 'pipeGapSize',
-    name: 'Pipe Spacing (Vert.)',
-    min: 0,
-    max: 4,
+    tooltip: 'The width of a pipe.',
   },
   {
     settingKey: 'pipeSpacing',
-    name: 'Pipe Spacing (Horiz.)',
+    name: 'Pipe Spacing',
     min: 1,
     max: 5,
+    tooltip: 'The horizontal space between consecutive pipes.',
+  },
+  {
+    settingKey: 'pipeGapSize',
+    name: 'Pipe Gap',
+    min: 0,
+    max: 4,
+    tooltip: 'The size of the gap between top and bottom pipe segments.',
   },
 ];
 
