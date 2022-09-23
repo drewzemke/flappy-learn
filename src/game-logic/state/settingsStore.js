@@ -32,7 +32,7 @@ export const settingsSlice = (set, get) => ({
 
   simulationSettings: {
     // Number of birds in each generation (should be even)
-    numBirds: 80,
+    numBirds: 200,
 
     // Signature for each neural network
     // This has to start with 5 and end with 1, but can have entries in between
