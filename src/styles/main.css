@@ -48,3 +48,8 @@ body {
   border-radius: 10px;
   overflow: hidden;
 }
+
+.flex-break {
+  flex-basis: 100%;
+  height: 0;
+}

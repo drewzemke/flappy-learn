@@ -115,6 +115,7 @@ export default function AISettingsMenu({ handleButton }) {
               {...settingInfo}
             />
           ))}
+          <div className='flex-break'></div>
           <button
             value='start'
             onClick={handleButton}

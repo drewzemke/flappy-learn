@@ -109,8 +109,9 @@ export const gameSlice = (set, get) => ({
           new BirdModel(
             gameSettings.birdX,
             gameSettings.birdInitialY,
-            // Setting the initial velocity to be equal to the jump vel
-            gameSettings.birdJumpVel,
+            // Setting the initial velocity to be equal to the jump vel for
+            // human players, and 0 for ai
+            neuralNets.length ? 0 : gameSettings.birdJumpVel,
             gameSettings.birdJumpVel
           )
       );

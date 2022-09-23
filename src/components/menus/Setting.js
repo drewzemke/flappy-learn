@@ -43,6 +43,7 @@ export default function Setting({
         thumbHeight={15}
         thumbColor={'var(--highlight-color)'}
         thumbStyle={{ borderRadius: '3px' }}
+        thumbHoverStyle={{ boxShadow: '0 0 0 8px rgba(255, 255, 255, 0.2)' }}
       />
     </div>
   );
