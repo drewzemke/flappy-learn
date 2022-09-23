@@ -28,9 +28,7 @@ export function PlayerPausedOverlay({ handleButton }) {
     <CanvasOverlay clickable>
       <div className='overlay-message'>
         <p>Game paused.</p>
-        <p>
-          Try ad justing the settings to increase or decrease the challenge!
-        </p>
+        <p>Try adjusting the settings to increase or decrease the challenge!</p>
 
         <button
           value='start'

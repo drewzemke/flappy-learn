@@ -2,18 +2,24 @@ import CanvasOverlay from './CanvasOverlay';
 import { round } from '../../../utils/mathServices';
 import { useEffect } from 'react';
 
-export function AIPausedOverlay({ handleButton }) {
+export function AIPausedOverlay({ handleResume, handleBackToSettings }) {
   return (
     <CanvasOverlay clickable>
       <div className='overlay-message'>
         <p>Simulation paused.</p>
-
         <button
           value='start'
-          onClick={handleButton}
+          onClick={handleResume}
           className='overlay-item overlay-button'
         >
           Resume
+        </button>
+        <button
+          value='start'
+          onClick={handleBackToSettings}
+          className='overlay-item overlay-button'
+        >
+          Back to Simulation Settings
         </button>
       </div>
     </CanvasOverlay>

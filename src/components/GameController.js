@@ -72,23 +72,32 @@ export default function GameController({ isPlayerHuman }) {
     actions.pauseGame();
   };
 
+  // Used to start or unpause the game
   const handleStart = event => {
     event?.preventDefault();
     actions.start();
   };
 
+  // Used between rounds
   const handleRestart = event => {
     event?.preventDefault();
     actions.prepNextRound();
     actions.start();
   };
 
+  // This is for the "auto advance to next round" checkbox
   const handleCheckbox = event => {
     const newSimSettings = {
       ...simSettings,
       autoAdvance: !simSettings.autoAdvance,
     };
     setSimSettings(newSimSettings);
+  };
+
+  const handleBackToSettings = event => {
+    // Just reset the state
+    actions.unInit();
+    actions.init(isPlayerHuman);
   };
 
   return (
@@ -145,7 +154,10 @@ export default function GameController({ isPlayerHuman }) {
         ) : null}
 
         {gameState === GameState.AI_PAUSED ? (
-          <AIPausedOverlay handleButton={handleStart} />
+          <AIPausedOverlay
+            handleResume={handleStart}
+            handleBackToSettings={handleBackToSettings}
+          />
         ) : null}
 
         {gameState === GameState.AI_DEAD ? (

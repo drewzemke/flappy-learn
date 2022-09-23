@@ -81,39 +81,37 @@ export default function AIAbout() {
           First, note that going back to the AI settings menu will reset the
           simulation! You'll have to start over from Round 1. Sorry!
         </p>
-        <p>
-          Here are some additional issues that you might run into.
-          <ul>
-            <li>
-              <p>
-                Watch out for <span className='emph'>convergence</span> towards
-                a losing strategy. Sometimes the entire population of AIs will
-                start to act like the best and only strategy is to fly straight
-                into the ceiling or drop straight onto the floor, and the only
-                thing that will break them out of that loop is a lucky mutation.
-                If you see this kind of thing happening, it's often best to just
-                reset the simulation and maybe tweak the settings.
-              </p>
-            </li>
-            <li>
-              <p>
-                Setting the generation size too small makes those kinds of
-                convergence issues more likely. Larger generations are better
-                (more diversity!), but can cause performance issues on mobile
-                devices or slower computers.
-              </p>
-            </li>
-            <li>
-              <p>
-                Setting "Children Per Pair" too large can run into similar
-                convergence issues because it limits diversity. For example, if
-                the generation size is 1000 and each pair generates 200
-                children, then only the ten highest-scoring AIs pass their genes
-                to the next generation.
-              </p>
-            </li>
-          </ul>
-        </p>
+        <p>Here are some additional issues that you might run into.</p>
+        <ul>
+          <li>
+            <p>
+              Watch out for <span className='emph'>convergence</span> towards a
+              losing strategy. Sometimes the entire population of AIs will start
+              to act like the best and only strategy is to fly straight into the
+              ceiling or drop straight onto the floor, and the only thing that
+              will break them out of that loop is a lucky mutation. If you see
+              this kind of thing happening, it's often best to just reset the
+              simulation and maybe tweak the settings.
+            </p>
+          </li>
+          <li>
+            <p>
+              Setting the generation size too small makes those kinds of
+              convergence issues more likely. Larger generations are better
+              (more diversity!), but can cause performance issues on mobile
+              devices or slower computers.
+            </p>
+          </li>
+          <li>
+            <p>
+              Setting "Children Per Pair" too large can run into similar
+              convergence issues because it limits diversity. For example, if
+              the generation size is 1000 and each pair generates 200 children,
+              then only the ten highest-scoring AIs pass their genes to the next
+              generation.
+            </p>
+          </li>
+        </ul>
       </AboutExpander>
       <AboutExpander title='Nerdy Details'>
         <h2>What are the technical names for these things?</h2>

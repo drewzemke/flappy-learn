@@ -86,6 +86,6 @@
   padding-left: 1rem;
 }
 
-.about-content li {
+.about-content li:not(:first-child) {
   padding-top: 0.5rem;
 }
