@@ -154,6 +154,7 @@ export default class GeneticNeuralNetwork {
       reproductionMutationRate,
       reproductionMutationStdDev,
       weightedMaxQuota,
+      childrenPerPair,
     }
   ) {
     // First, sort by fitness.
@@ -165,20 +166,21 @@ export default class GeneticNeuralNetwork {
 
     // Here's one way to do this...
     // Take the top 50% and have them pair off and make 4 children each.
+    // Or, more generally: each pair generates 'childrenPerPair' children
     if (reproductionMethod === 'pairs') {
-      for (let i = 0; i < sortedNNs.length / 2; i += 2) {
-        Array(4)
-          .fill(0)
-          .forEach(() =>
-            newNNs.push(
-              GeneticNeuralNetwork.reproduce(
-                sortedNNs[i],
-                sortedNNs[i + 1],
-                reproductionMutationRate,
-                reproductionMutationStdDev
-              )
+      // We do input validation to ensure that childrenPerPair divides
+      // the number of NNs and that the number of NNs is at least 2*cPP
+      for (let i = 0; i < (2 * sortedNNs.length) / childrenPerPair; i += 2) {
+        Array.from({ length: childrenPerPair }, () =>
+          newNNs.push(
+            GeneticNeuralNetwork.reproduce(
+              sortedNNs[i],
+              sortedNNs[i + 1],
+              reproductionMutationRate,
+              reproductionMutationStdDev
             )
-          );
+          )
+        );
       }
     }
 

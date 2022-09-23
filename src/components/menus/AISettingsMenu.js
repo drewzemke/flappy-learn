@@ -63,24 +63,28 @@ export default function AISettingsMenu({ handleButton }) {
     // Need to do some preprocessing for certain keys:
     // - numBirds -- round to nearest multiple of childrenPerPair
     // - childrenPerPair -- round to nearest integer, also adjust numBirds
+    // Note: The smallest numBirds can be is TWICE childrenPerPair, because
+    //   we need there to be enough birds to form pairs!
     if (settingKey === 'numBirds') {
       const childrenPerPair = simSettings.childrenPerPair;
       newValue = roundToNearestMult(newValue, childrenPerPair);
 
-      // Make sure this doesn't send numBirds above the max or below the min
+      // Make sure this doesn't send numBirds above the max or below the min.
       const numBirdSettingInfo = availableSettings.find(
         setting => setting.settingKey === 'numBirds'
       );
       if (newValue > numBirdSettingInfo.max) {
         newValue -= childrenPerPair;
       }
-      if (newValue < numBirdSettingInfo.min) {
+      while (newValue < Math.max(numBirdSettingInfo.min, 2 * childrenPerPair)) {
         newValue += childrenPerPair;
       }
     }
+
     if (settingKey === 'childrenPerPair') {
       newValue = Math.round(newValue);
       let newNumBirds = roundToNearestMult(simSettings.numBirds, newValue);
+
       // Make sure this doesn't send numBirds above the max or below the min
       const numBirdSettingInfo = availableSettings.find(
         setting => setting.settingKey === 'numBirds'
@@ -88,7 +92,7 @@ export default function AISettingsMenu({ handleButton }) {
       if (newNumBirds > numBirdSettingInfo.max) {
         newNumBirds -= newValue;
       }
-      if (newNumBirds < numBirdSettingInfo.min) {
+      while (newNumBirds < Math.max(numBirdSettingInfo.min, 2 * newValue)) {
         newNumBirds += newValue;
       }
       newSimSettings.numBirds = newNumBirds;
