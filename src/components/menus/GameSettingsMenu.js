@@ -4,6 +4,7 @@ import CanvasContainer from '../ui-elements/CanvasContainer';
 import CanvasOverlay from '../ui-elements/overlays/CanvasOverlay';
 import Setting from './Setting';
 import GameSettingsSampleScreen from './GameSettingsSampleScreen';
+import SettingsAbout from '../ui-elements/abouts/SettingsAbout';
 
 // An array to store the names of the available settings
 // and the parameters used to set them.
@@ -106,6 +107,7 @@ export default function GameSettingsMenu() {
           </div>
         </CanvasOverlay>
       </CanvasContainer>
+      <SettingsAbout />
     </>
   );
 }

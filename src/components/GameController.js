@@ -19,6 +19,7 @@ import {
   AIDeadOverlay,
   AIPausedOverlay,
 } from './ui-elements/overlays/AIOverlays';
+import AIAbout from './ui-elements/abouts/AIAbout';
 
 // This is the main component for interacting with the game state.
 // It captures player control and passes it to the state, displays
@@ -91,69 +92,72 @@ export default function GameController({ isPlayerHuman }) {
   };
 
   return (
-    <CanvasContainer>
-      <GameCanvas
-        gameWidth={gameWidth}
-        gameHeight={gameHeight}
-        gameCanvasRef={gameCanvasRef}
-      >
-        <GameDisplay
-          birds={birds}
-          pipes={pipes}
-          gameSettings={gameSettings}
-          isRunning={
-            gameState === GameState.PLAYER_PLAYING ||
-            gameState === GameState.AI_PLAYING
-          }
-        />
-      </GameCanvas>
+    <>
+      <CanvasContainer>
+        <GameCanvas
+          gameWidth={gameWidth}
+          gameHeight={gameHeight}
+          gameCanvasRef={gameCanvasRef}
+        >
+          <GameDisplay
+            birds={birds}
+            pipes={pipes}
+            gameSettings={gameSettings}
+            isRunning={
+              gameState === GameState.PLAYER_PLAYING ||
+              gameState === GameState.AI_PLAYING
+            }
+          />
+        </GameCanvas>
 
-      {isPlayerHuman ? (
-        <PlayerScoreOverlay
-          handlePauseButton={handlePauseButton}
-          score={score}
-        />
-      ) : (
-        <AIScoreOverlay
-          handlePauseButton={handlePauseButton}
-          score={score}
-          round={round}
-          numAlive={numAlive}
-          numBirds={birds.length}
-        />
-      )}
+        {isPlayerHuman ? (
+          <PlayerScoreOverlay
+            handlePauseButton={handlePauseButton}
+            score={score}
+          />
+        ) : (
+          <AIScoreOverlay
+            handlePauseButton={handlePauseButton}
+            score={score}
+            round={round}
+            numAlive={numAlive}
+            numBirds={birds.length}
+          />
+        )}
 
-      {gameState === GameState.PLAYER_INTRO_SCREEN ? (
-        <PlayerIntroOverlay handleButton={handleStart} />
-      ) : null}
+        {gameState === GameState.PLAYER_INTRO_SCREEN ? (
+          <PlayerIntroOverlay handleButton={handleStart} />
+        ) : null}
 
-      {gameState === GameState.PLAYER_PAUSED ? (
-        <PlayerPausedOverlay handleButton={handleStart} />
-      ) : null}
+        {gameState === GameState.PLAYER_PAUSED ? (
+          <PlayerPausedOverlay handleButton={handleStart} />
+        ) : null}
 
-      {gameState === GameState.PLAYER_DEAD ? (
-        <PlayerDeadOverlay
-          handleButton={handleRestart}
-          scoreHistory={scoreHistory}
-        />
-      ) : null}
+        {gameState === GameState.PLAYER_DEAD ? (
+          <PlayerDeadOverlay
+            handleButton={handleRestart}
+            scoreHistory={scoreHistory}
+          />
+        ) : null}
 
-      {gameState === GameState.AI_SETTINGS ? (
-        <AISettingsMenu handleButton={handleStart} />
-      ) : null}
+        {gameState === GameState.AI_SETTINGS ? (
+          <AISettingsMenu handleButton={handleStart} />
+        ) : null}
 
-      {gameState === GameState.AI_PAUSED ? (
-        <AIPausedOverlay handleButton={handleStart} />
-      ) : null}
+        {gameState === GameState.AI_PAUSED ? (
+          <AIPausedOverlay handleButton={handleStart} />
+        ) : null}
 
-      {gameState === GameState.AI_DEAD ? (
-        <AIDeadOverlay
-          handleButton={handleRestart}
-          handleCheckbox={handleCheckbox}
-          autoAdvance={simSettings.autoAdvance}
-          scoreHistory={scoreHistory}
-        />
-      ) : null}
-    </CanvasContainer>
+        {gameState === GameState.AI_DEAD ? (
+          <AIDeadOverlay
+            handleButton={handleRestart}
+            handleCheckbox={handleCheckbox}
+            autoAdvance={simSettings.autoAdvance}
+            scoreHistory={scoreHistory}
+          />
+        ) : null}
+      </CanvasContainer>
+      {isPlayerHuman ? null : <AIAbout />}
+    </>
   );
 }
