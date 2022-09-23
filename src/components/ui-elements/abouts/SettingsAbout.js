@@ -6,7 +6,7 @@ export default function SettingsAbout() {
     <AboutExpander title='Settings Info'>
       <h2>About</h2>
       <p>
-        I set up the default settings so that the game feels similar to the
+        The default settings are chosen so that the game feels similar to the
         original <span className='emph'>Flappy Bird</span>, but you should feel
         free to change the game however you like.
       </p>
@@ -18,15 +18,15 @@ export default function SettingsAbout() {
       </p>
       <p>
         The little question mark circles next to each slider tell you a bit more
-        about what the setting does, and you can see the effect that the setting
-        has on the game as you change it.
+        about what the setting does, and you can see how each setting affects
+        the game as you change it.
       </p>
       <h2>Note!</h2>
       <p>
-        It's possible to create a game that is impossible to play &mdash; for
-        instance, you can set the jump velocity so high that your poor bird
-        flies straight into the ceiling, or you can make the spacing between the
-        pipes too small to fit through.
+        It's possible to create a game that is impossible to play! For instance,
+        you can set the jump velocity so high that your poor bird flies straight
+        into the ceiling, or you can make the spacing between the pipes too
+        small to fit through.
       </p>
       <p>
         That said, it's quite satisfying to make the game extremely difficult

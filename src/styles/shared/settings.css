@@ -9,7 +9,6 @@
   align-items: flex-start;
   flex-wrap: wrap;
   row-gap: 10px;
-  z-index: 1000;
 }
 
 /* for small screen widths */
@@ -20,6 +19,7 @@
     height: 100%;
     align-items: center;
     padding: 5% 0%;
+    row-gap: 7px;
   }
 }
 

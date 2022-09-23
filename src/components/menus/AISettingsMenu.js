@@ -111,6 +111,8 @@ export default function AISettingsMenu({ handleButton }) {
     <>
       <CanvasOverlay clickable>
         <div className={'settings-list'}>
+          <p>Simulation Settings</p>
+          <div className='flex-break'></div>
           {availableSettings.map(settingInfo => (
             <Setting
               key={settingInfo.settingKey}

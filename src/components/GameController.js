@@ -166,6 +166,7 @@ export default function GameController({ isPlayerHuman }) {
             handleCheckbox={handleCheckbox}
             autoAdvance={simSettings.autoAdvance}
             scoreHistory={scoreHistory}
+            handleBackToSettings={handleBackToSettings}
           />
         ) : null}
       </CanvasContainer>

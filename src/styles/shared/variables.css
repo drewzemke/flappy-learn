@@ -3,7 +3,7 @@
   --main-hue: 200;
   --background-color: hsl(var(--main-hue), 10%, 10%);
   --main-color: hsl(var(--main-hue), 80%, 70%);
-  --overlay-bg-color: hsla(0, 0%, 0%, 80%);
+  --overlay-bg-color: hsla(0, 0%, 0%, 85%);
   --overlay-item-bg-color: hsla(0, 0%, 0%, 60%);
 
   /* replace these with actually colors from the palette!! */

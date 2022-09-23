@@ -29,6 +29,7 @@ export function AIPausedOverlay({ handleResume, handleBackToSettings }) {
 export function AIDeadOverlay({
   handleButton,
   handleCheckbox,
+  handleBackToSettings,
   autoAdvance,
   scoreHistory,
 }) {
@@ -67,6 +68,13 @@ export function AIDeadOverlay({
           ></div>
           Automatically advance to the next round after 1 second.
         </div>
+        <button
+          value='start'
+          onClick={handleBackToSettings}
+          className='overlay-item overlay-button'
+        >
+          Back to Simulation Settings
+        </button>
       </div>
     </CanvasOverlay>
   );
