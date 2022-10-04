@@ -101,7 +101,7 @@ export default class GeneticNeuralNetwork {
   //
   // Params:
   //  - two neural nets (duh)
-  //  - mutation rate (probability)  <--- actually do we need this?? hmmmm
+  //  - mutation rate (probability)
   //  - mutation stddev (should probably be small relative to the overall variance of both parents)
   static reproduce(parent1, parent2, mutationRate, mutationStddev) {
     // This should equal the signature of the other parent. If it doesn't, we're in trouble...
@@ -150,11 +150,11 @@ export default class GeneticNeuralNetwork {
   static makeNewGeneration(
     neuralNets,
     {
-      reproductionMethod,
-      reproductionMutationRate,
-      reproductionMutationStdDev,
-      weightedMaxQuota,
-      childrenPerPair,
+      reproductionMethod = 'pairs',
+      reproductionMutationRate = 0,
+      reproductionMutationStdDev = 1,
+      weightedMaxQuota = 1,
+      childrenPerPair = 2,
     }
   ) {
     // First, sort by fitness.
@@ -185,6 +185,7 @@ export default class GeneticNeuralNetwork {
     }
 
     // Here's another way to do it...
+    // Note -- this is no longer used in the game. It didn't produce good learning outcomes :P
     if (reproductionMethod === 'weighted') {
       // Create a list of weights to use to select at random.
       // Let's try squaring the weights to emphasize higher scores

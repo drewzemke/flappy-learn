@@ -1,4 +1,4 @@
-import { GeneticNeuralNetwork } from './GeneticNeuralNet';
+import GeneticNeuralNetwork from './GeneticNeuralNet';
 
 test('should be able to create (and print) a NN', () => {
   const sig = [6, 4, 4, 1];
@@ -21,9 +21,9 @@ test('should be able to compute a NN output', () => {
   const sig = [6, 1];
   const nn = new GeneticNeuralNetwork(sig);
   nn.initRandom(0, 1);
-  console.log(nn.toString());
+  // console.log(nn.toString());
   const output = nn.compute([1, 2, 3, 4, 5, 6]);
-  console.log(output);
+  // console.log(output);
   expect(output).not.toBe(null);
   expect(output).toBeDefined();
 });
@@ -40,4 +40,20 @@ test('should be able to make two NNs and have them reproduce', () => {
   // console.log(baby.toString());
   expect(baby).not.toBe(null);
   expect(baby).toBeDefined();
+});
+
+test('should be able to create a set of NNs and make a generation from them', () => {
+  const numNNs = 10;
+  const sig = [2, 3, 1];
+  const neuralNets = Array.from({ length: numNNs }, () => {
+    const nn = new GeneticNeuralNetwork(sig);
+    nn.initRandom(0, 1);
+    return nn;
+  });
+  expect(neuralNets.length).toBe(numNNs);
+  const newNNs = GeneticNeuralNetwork.makeNewGeneration(neuralNets, {
+    reproductionMethod: 'pairs',
+    childrenPerPair: 2,
+  });
+  expect(newNNs.length).toBe(numNNs);
 });

@@ -10,7 +10,6 @@ export default function AboutExpander({ title, children }) {
         onClick={() => setOpen(isOpen => !isOpen)}
       >
         <h1>{title}</h1>
-        <p>(Click to expand)</p>
         <MenuExpandSVG />
       </div>
       <div className={`about-content-container ${isOpen ? 'open' : ''}`}>

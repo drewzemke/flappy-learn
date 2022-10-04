@@ -4,6 +4,7 @@ import { useRef } from 'react';
 // Hey look, I made my own slider component!
 // Heavily inspired by Robin Wieruch: https://www.robinwieruch.de/react-slider/
 //
+// last updated 2022-09-22
 
 // Turns a number into a string followed by 'px', otherwise leaves the input alone
 const autoPx = input => (typeof input === 'number' ? `${input}px` : input);

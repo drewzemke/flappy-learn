@@ -49,11 +49,14 @@ export function sampleWeightedList(weights, maxQuota) {
 }
 
 // Rounds a decimal to a given number of places
-export const round = (val, places = 0) =>
-  Math.round(10 ** places * val) / 10 ** places;
+export function round(val, places = 0) {
+  return Math.round(10 ** places * val) / 10 ** places;
+}
 
 // Rounds x to the nearest multiple of y
-export const roundToNearestMult = (x, y) => y * Math.round(x / y);
+export function roundToNearestMult(x, y) {
+  return y * Math.round(x / y);
+}
 
 // I just need a clamp function and I don't want to define it everywhere, okay?
 // Just a utility function. This probably exists in a library somewhere...
